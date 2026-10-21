@@ -1,0 +1,26 @@
+{
+  "appName": "Conecta Brazense",
+  "gentilico": "brazense",
+  "gentilicoPlural": "brazenses",
+  "cidade": "Wenceslau Braz",
+  "uf": "PR",
+  "coordenadas": { "lat": -23.8742, "lng": -49.8031 },
+  "cores": {
+    "primaria": "#16264A",
+    "primariaClara": "#24396B",
+    "destaque": "#E0703A",
+    "produtor": "#2E9459",
+    "fundo": "#F6F4EF",
+    "tinta": "#1B2335"
+  },
+  "bairros": [
+    "Centro",
+    "Vila Nova",
+    "Jardim Primavera",
+    "Vila São Pedro",
+    "Jardim das Flores",
+    "Bairro Alto",
+    "Vila Esperança",
+    "Zona Rural"
+  ]
+}

@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Valores iniciais; o city.json sobrescreve em tempo de execução. */
+:root {
+  --c-primaria: 22 38 74;
+  --c-primaria-clara: 36 57 107;
+  --c-destaque: 224 112 58;
+  --c-produtor: 46 148 89;
+  --c-fundo: 246 244 239;
+  --c-tinta: 27 35 53;
+  color-scheme: light;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  background: #e9e6df;
+}
+
+body {
+  @apply bg-fundo font-sans text-tinta antialiased;
+  overscroll-behavior-y: none;
+}
+
+@media (min-width: 640px) {
+  body {
+    background: #e9e6df;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+input[type='search']::-webkit-search-cancel-button {
+  display: none;
+}
