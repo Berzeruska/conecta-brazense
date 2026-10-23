@@ -48,11 +48,11 @@ export function EstadoVazio({ Icone, titulo, texto, children }: { Icone: typeof 
 }
 
 /** Aviso discreto exigido pelas regras do MVP. */
-export function RodapeDemo() {
+export function RodapeDemo({ texto = 'Protótipo navegável · lojas, produtores e anúncios fictícios de demonstração' }: { texto?: string }) {
   return (
     <p className="flex items-center justify-center gap-1.5 px-6 pb-6 pt-8 text-center text-[11px] text-slate-400">
       <FlaskConical className="h-3.5 w-3.5 shrink-0" aria-hidden />
-      Protótipo navegável · lojas, produtores e anúncios fictícios de demonstração
+      {texto}
     </p>
   )
 }

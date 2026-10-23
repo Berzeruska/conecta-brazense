@@ -101,8 +101,53 @@ try {
   await page.getByText('Vitrine').waitFor()
   ok('páginas de produtor e loja abrem')
 
+  // Zelador: o "telão" fica aberto em outra aba; o celular reporta e o ponto aparece lá
+  const telao = await ctx.newPage()
+  telao.on('pageerror', (e) => erros.push(`telão pageerror: ${e.message}`))
+  await telao.setViewportSize({ width: 1280, height: 720 })
+  await telao.goto(`${BASE}/telao`)
+  await telao.getByText('Últimos reportes').waitFor()
+
+  await page.getByRole('link', { name: 'Zelador', exact: true }).click()
+  await page.getByText('Todos (10)').waitFor()
+  await page.waitForTimeout(900)
+  await print('13-zelador')
+  verificar((await page.locator('.mapa .leaflet-marker-icon').count()) === 10, 'mapa do Zelador com os 10 pinos de exemplo')
+  const tilesOk = await page.evaluate(() => [...document.querySelectorAll('.leaflet-tile')].filter((i) => i.src.includes('/tiles/') && i.complete && i.naturalWidth > 0).length)
+  verificar(tilesOk > 0, `tiles locais do mapa carregaram (${tilesOk})`)
+
+  await page.getByRole('link', { name: /Reportar problema/ }).click()
+  await page.getByRole('radio', { name: /Buraco/ }).click()
+  await page.getByTestId('entrada-foto').setInputFiles('public/img/zelador/z-buraco-chuva.jpg')
+  await page.getByAltText('Prévia da foto').waitFor()
+  const mapa = page.getByRole('region', { name: 'Toque no mapa para marcar o local' })
+  await mapa.scrollIntoViewIfNeeded()
+  const caixa = await mapa.boundingBox()
+  await page.mouse.click(caixa.x + caixa.width * 0.4, caixa.y + caixa.height * 0.6)
+  await page.getByText('Local marcado').waitFor()
+  await page.getByRole('combobox', { name: 'Bairro' }).selectOption('Vila Nova')
+  await page.getByRole('textbox', { name: /Conte mais/ }).fill('Buraco novo na frente da escola')
+  await print('14-novo-reporte')
+  await page.getByRole('button', { name: /Enviar reporte/ }).click()
+  await page.getByRole('heading', { name: 'Buraco · Vila Nova' }).waitFor()
+  await page.waitForTimeout(600)
+  await print('15-reporte-enviado')
+  verificar((await page.getByText('dias sem resposta', { exact: true }).isVisible()) && (await page.getByText('0', { exact: true }).isVisible()), 'reporte criado com contador zerado')
+
+  await telao.getByText('Novo reporte agora').waitFor({ timeout: 5000 })
+  await telao.waitForTimeout(1500)
+  await telao.screenshot({ path: `${PRINTS}/16-telao-ponto-novo.png` })
+  verificar((await telao.locator('.pino-novo').count()) === 1, 'telão mostrou o ponto novo pulsando e o aviso')
+  await telao.close()
+
+  // Mapa da cidade e serviços
+  await page.goto(`${BASE}/mapa?foco=hospital-sao-sebastiao`)
+  await page.locator('.leaflet-popup').getByText('Hospital São Sebastião').waitFor()
+  await print('17-mapa-hospital')
+  ok('mapa abre no hospital com o balão aberto')
+
   // Sem rolagem horizontal em nenhuma tela principal
-  for (const rota of ['/', '/buscar?q=mel', '/feirao', '/carrinho', '/perfil', '/vendedor', '/produto/queijo-frescal', '/feirao/sofa-3-lugares']) {
+  for (const rota of ['/', '/buscar?q=mel', '/feirao', '/carrinho', '/perfil', '/vendedor', '/produto/queijo-frescal', '/feirao/sofa-3-lugares', '/zelador', '/zelador/novo', '/zelador/ex-lixo-flores', '/mapa']) {
     await page.goto(BASE + rota)
     await page.waitForTimeout(300)
     const larg = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
@@ -116,7 +161,7 @@ try {
   await page.waitForFunction(() => !!navigator.serviceWorker.controller)
   await ctx.setOffline(true)
   erros.length = 0
-  for (const rota of ['/', '/buscar?q=queijo', '/feirao', '/produtor/apiario-serra-azul', '/produto/morango', '/perfil', '/feirao/gatinhos-doacao']) {
+  for (const rota of ['/', '/buscar?q=queijo', '/feirao', '/produtor/apiario-serra-azul', '/produto/morango', '/perfil', '/feirao/gatinhos-doacao', '/zelador', '/zelador/ex-poste-vila-nova', '/mapa', '/telao']) {
     await page.goto(BASE + rota)
     await page.waitForLoadState('load')
     await page.waitForTimeout(400)
@@ -126,7 +171,20 @@ try {
     const quebradas = await page.evaluate(() => [...document.images].filter((i) => i.complete && i.naturalWidth === 0).map((i) => i.src))
     verificar(quebradas.length === 0, `offline: ${rota} abre com todas as fotos (${quebradas.join(', ')})`)
   }
-  await print('12-offline-inicio')
+  const tilesOffline = await page.evaluate(() => [...document.querySelectorAll('.leaflet-tile')].filter((i) => i.src.includes('/tiles/') && i.naturalWidth > 0).length)
+  verificar(tilesOffline > 0, `offline: mapa do telão com tiles do cache (${tilesOffline})`)
+  await print('12-offline-telao')
+
+  // Reportar em modo avião também funciona (fica no aparelho)
+  await page.goto(`${BASE}/zelador/novo`)
+  await page.getByRole('radio', { name: /Lixo/ }).click()
+  const mapa2 = page.getByRole('region', { name: 'Toque no mapa para marcar o local' })
+  await mapa2.scrollIntoViewIfNeeded()
+  const m2 = await mapa2.boundingBox()
+  await page.mouse.click(m2.x + m2.width / 2, m2.y + m2.height / 2)
+  await page.getByRole('button', { name: /Enviar reporte/ }).click()
+  await page.getByRole('heading', { name: /^Lixo · / }).waitFor()
+  ok('offline: reporte salvo no aparelho')
   await ctx.setOffline(false)
 
   verificar(erros.length === 0, `nenhum erro no console ${erros.join(' | ')}`)

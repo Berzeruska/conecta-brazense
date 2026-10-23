@@ -105,3 +105,14 @@ f-suculenta|1485955900006-10f4d324d411|p
 f-jeans|1714729382668-7bc3bb261662|p
 f-cadeiras|1577176434922-803273eba97a|p
 f-mexerica|1786020629276-28bc20b6c7e9|p
+# Zelador (reportes de exemplo) → public/img/zelador/
+z-buraco-poca|1657811146537-90d7d8133224|p
+z-buraco-chuva|1560782205-4dd83ceb0270|p
+z-asfalto-rachado|1635068741358-ab1b9813623f|p
+z-poste-apagado|1543518360-68b9612a7c8c|p
+z-rua-escura|1485599352433-e476c850f2a9|p
+z-moveis-calcada|1719003361901-bf35eb12c47f|p
+z-lixo-container|1740471348165-2aac81fff608|p
+z-entulho|1660319250386-695848c81289|p
+z-arvore-caida|1645466996104-22f4b160331b|p
+z-calcada-quebrada|1779179015285-120aaa822b1b|p

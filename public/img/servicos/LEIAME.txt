@@ -1,0 +1,8 @@
+Fotos reais dos serviços públicos (tiradas pela equipe). Use exatamente estes nomes:
+
+  hospital.jpg       Hospital São Sebastião
+  posto-toyoki.jpg   Posto de saúde do Toyoki
+  prefeitura.jpg     Prefeitura
+
+Formato paisagem (deitada), de preferência até 300 KB (ex.: 1200 x 800).
+Enquanto um arquivo não existir, o app mostra um placeholder.

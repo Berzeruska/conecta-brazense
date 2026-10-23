@@ -1,0 +1,4 @@
+Fotos da cidade (tiradas pela equipe) para a capa do Início.
+Qualquer nome .jpg/.png/.webp; entram em ordem alfabética (ex.: 01-praca.jpg, 02-igreja.jpg).
+1 foto = capa fixa; 2 ou mais = carrossel. Sem fotos, o Início fica como está.
+Formato paisagem, de preferência até 300 KB (ex.: 1200 x 800). Sem placas de lojas ou marcas visíveis.

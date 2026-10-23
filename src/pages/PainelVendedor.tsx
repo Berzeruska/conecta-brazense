@@ -24,7 +24,19 @@ export const lerPreco = (t: string) => {
   return Number.isFinite(n) ? n : 0
 }
 
-function SeletorFoto({ foto, onFoto, cor }: { foto: string; onFoto: (url: string) => void; cor: string }) {
+export function SeletorFoto({
+  foto,
+  onFoto,
+  cor,
+  dica = 'Foto boa vende mais',
+  ladoMax,
+}: {
+  foto: string
+  onFoto: (url: string) => void
+  cor: string
+  dica?: string
+  ladoMax?: number
+}) {
   const entrada = useRef<HTMLInputElement>(null)
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState('')
@@ -44,7 +56,7 @@ function SeletorFoto({ foto, onFoto, cor }: { foto: string; onFoto: (url: string
           setErro('')
           setCarregando(true)
           try {
-            onFoto(await comprimirImagem(arquivo))
+            onFoto(await comprimirImagem(arquivo, ladoMax))
           } catch {
             setErro('Não deu para abrir essa foto. Tente outra.')
           } finally {
@@ -73,7 +85,7 @@ function SeletorFoto({ foto, onFoto, cor }: { foto: string; onFoto: (url: string
             </span>
             <span className="font-semibold text-tinta">Tirar ou escolher foto</span>
             <span className="flex items-center gap-1 text-xs">
-              <ImagePlus className="h-3.5 w-3.5" /> Foto boa vende mais
+              <ImagePlus className="h-3.5 w-3.5" /> {dica}
             </span>
           </>
         )}

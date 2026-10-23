@@ -1,15 +1,9 @@
 import { motion } from 'framer-motion'
-import { MapPinned, MessageCircleQuestion, Construction } from 'lucide-react'
+import { MessageCircleQuestion, Construction } from 'lucide-react'
 import { BotaoCarrinho } from '../components/BotaoCarrinho'
 import { RodapeDemo } from '../components/Diversos'
 
 const TELAS = {
-  zelador: {
-    titulo: 'Zelador',
-    Icone: MapPinned,
-    frase: 'Viu um buraco, poste apagado ou lixo acumulado? Fotografe, marque no mapa e acompanhe quantos dias está sem resposta.',
-    itens: ['Foto + categoria + ponto no mapa', 'Mapa público com status de cada problema', 'Contador de dias sem resposta', 'Modo telão ao vivo'],
-  },
   pergunte: {
     titulo: 'Pergunte à Cidade',
     Icone: MessageCircleQuestion,

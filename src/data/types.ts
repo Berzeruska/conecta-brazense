@@ -1,5 +1,10 @@
 export type TipoVendedor = 'produtor' | 'loja'
 
+export interface Coordenadas {
+  lat: number
+  lng: number
+}
+
 export interface Vendedor {
   id: string
   tipo: TipoVendedor
@@ -16,6 +21,8 @@ export interface Vendedor {
   taxaEntrega: number
   nota: number
   desde: number
+  /** Ponto fictício numa rua real da cidade, só para o mapa. */
+  coordenadas?: Coordenadas
 }
 
 export type Categoria =
@@ -63,4 +70,44 @@ export interface Anuncio {
   /** Data ISO de publicação. */
   publicadoEm: string
   meu?: boolean
+}
+
+export type TipoServico = 'saude' | 'prefeitura' | 'emergencia'
+
+export interface Servico {
+  id: string
+  nome: string
+  tipo: TipoServico
+  endereco: string | null
+  telefone: string
+  horario: string | null
+  coordenadas: Coordenadas | null
+  /** Caminho fixo da foto real; se o arquivo ainda não existir, o card mostra um placeholder. */
+  foto: string | null
+  fonte: string
+  /** Campos que ainda precisam ser conferidos pela equipe. */
+  aConfirmar: ('endereco' | 'telefone' | 'horario' | 'coordenadas')[]
+}
+
+export type CategoriaReporte = 'buraco' | 'iluminacao' | 'lixo' | 'outros'
+export type StatusReporte = 'aberto' | 'andamento' | 'resolvido'
+
+export interface Reporte {
+  id: string
+  categoria: CategoriaReporte
+  descricao: string
+  foto: string
+  lat: number
+  lng: number
+  bairro: string
+  autor: string
+  status: StatusReporte
+  /** Datas ISO. */
+  criadoEm: string
+  respondidoEm?: string
+  resolvidoEm?: string
+  /** Criado neste aparelho. */
+  meu?: boolean
+  /** Ainda não chegou ao servidor (sem internet ou sem Supabase). */
+  pendente?: boolean
 }

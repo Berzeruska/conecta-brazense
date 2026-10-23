@@ -9,12 +9,18 @@
     "bairro": "Centro",
     "endereco": "Av. Brasil, 1.020",
     "foto": "/img/cap-mercado.jpg",
-    "diasEntrega": ["Segunda a sábado"],
+    "diasEntrega": [
+      "Segunda a sábado"
+    ],
     "retirada": "No balcão, das 7h às 20h",
     "entrega": true,
     "taxaEntrega": 6,
     "nota": 4.5,
-    "desde": 1994
+    "desde": 1994,
+    "coordenadas": {
+      "lat": -23.8753,
+      "lng": -49.80219
+    }
   },
   {
     "id": "farmacia-bem-viver",
@@ -26,12 +32,18 @@
     "bairro": "Centro",
     "endereco": "Rua XV de Novembro, 330",
     "foto": "/img/cap-farmacia.jpg",
-    "diasEntrega": ["Segunda a sábado"],
+    "diasEntrega": [
+      "Segunda a sábado"
+    ],
     "retirada": "No balcão, das 8h às 21h",
     "entrega": true,
     "taxaEntrega": 5,
     "nota": 4.7,
-    "desde": 2008
+    "desde": 2008,
+    "coordenadas": {
+      "lat": -23.87243,
+      "lng": -49.80338
+    }
   },
   {
     "id": "atelie-linha-fina",
@@ -43,12 +55,18 @@
     "bairro": "Centro",
     "endereco": "Rua Sete de Setembro, 145",
     "foto": "/img/cap-roupas.jpg",
-    "diasEntrega": ["Terça a sábado"],
+    "diasEntrega": [
+      "Terça a sábado"
+    ],
     "retirada": "Na loja, das 9h às 18h",
     "entrega": false,
     "taxaEntrega": 0,
     "nota": 4.6,
-    "desde": 2017
+    "desde": 2017,
+    "coordenadas": {
+      "lat": -23.87298,
+      "lng": -49.80055
+    }
   },
   {
     "id": "agro-campo-forte",
@@ -60,12 +78,18 @@
     "bairro": "Vila Nova",
     "endereco": "Rodovia, saída para o trevo, 2.400",
     "foto": "/img/cap-agro.jpg",
-    "diasEntrega": ["Segunda a sábado"],
+    "diasEntrega": [
+      "Segunda a sábado"
+    ],
     "retirada": "No depósito, das 7h às 18h",
     "entrega": true,
     "taxaEntrega": 10,
     "nota": 4.6,
-    "desde": 2001
+    "desde": 2001,
+    "coordenadas": {
+      "lat": -23.87781,
+      "lng": -49.81208
+    }
   },
   {
     "id": "constroi-mais",
@@ -77,12 +101,18 @@
     "bairro": "Jardim Primavera",
     "endereco": "Rua Paraná, 780",
     "foto": "/img/cap-construcao.jpg",
-    "diasEntrega": ["Segunda a sábado"],
+    "diasEntrega": [
+      "Segunda a sábado"
+    ],
     "retirada": "No balcão, das 7h30 às 18h",
     "entrega": true,
     "taxaEntrega": 12,
     "nota": 4.4,
-    "desde": 2012
+    "desde": 2012,
+    "coordenadas": {
+      "lat": -23.86627,
+      "lng": -49.7932
+    }
   },
   {
     "id": "padaria-pao-da-praca",
@@ -94,12 +124,18 @@
     "bairro": "Centro",
     "endereco": "Praça central, 12",
     "foto": "/img/cap-padaria.jpg",
-    "diasEntrega": ["Todos os dias"],
+    "diasEntrega": [
+      "Todos os dias"
+    ],
     "retirada": "No balcão, das 6h às 20h",
     "entrega": true,
     "taxaEntrega": 4,
     "nota": 4.7,
-    "desde": 1989
+    "desde": 1989,
+    "coordenadas": {
+      "lat": -23.87603,
+      "lng": -49.80462
+    }
   },
   {
     "id": "floricultura-jardim-da-serra",
@@ -111,12 +147,18 @@
     "bairro": "Jardim das Flores",
     "endereco": "Rua das Acácias, 61",
     "foto": "/img/cap-floricultura.jpg",
-    "diasEntrega": ["Segunda a sábado"],
+    "diasEntrega": [
+      "Segunda a sábado"
+    ],
     "retirada": "Na loja, das 8h às 18h",
     "entrega": true,
     "taxaEntrega": 6,
     "nota": 4.8,
-    "desde": 2015
+    "desde": 2015,
+    "coordenadas": {
+      "lat": -23.86682,
+      "lng": -49.80616
+    }
   },
   {
     "id": "conserta-ja",
@@ -128,11 +170,17 @@
     "bairro": "Vila Nova",
     "endereco": "Rua Rio de Janeiro, 209",
     "foto": "/img/cap-assistencia.jpg",
-    "diasEntrega": ["Segunda a sexta"],
+    "diasEntrega": [
+      "Segunda a sexta"
+    ],
     "retirada": "Na loja, das 9h às 18h",
     "entrega": false,
     "taxaEntrega": 0,
     "nota": 4.5,
-    "desde": 2020
+    "desde": 2020,
+    "coordenadas": {
+      "lat": -23.8799,
+      "lng": -49.79746
+    }
   }
 ]

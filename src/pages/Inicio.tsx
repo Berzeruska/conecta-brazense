@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Search, Leaf, Store, Repeat, MapPin, CalendarDays, ArrowRight, Sparkles } from 'lucide-react'
+import { Search, Leaf, Store, Repeat, MapPin, CalendarDays, ArrowRight, Sparkles, Maximize2 } from 'lucide-react'
 import { city } from '../lib/city'
 import { CATEGORIAS, acharProduto, comparar, produtorDoDia, produtores, lojas, useCatalogo } from '../lib/catalogo'
 import { useReservas, valorNaCidade } from '../lib/carrinho'
@@ -10,6 +10,11 @@ import { CartaoAnuncio, CartaoProduto, CartaoVendedor } from '../components/Cart
 import { ComparacaoPreco } from '../components/Comparacao'
 import { NumeroAnimado, RodapeDemo, TituloSecao } from '../components/Diversos'
 import { SeloDaqui } from '../components/Selos'
+import { CapaCidade } from '../components/CapaCidade'
+import { Mapa } from '../components/Mapa'
+import { CAMADAS, PinosCidade } from '../components/PinosCidade'
+import { Emergencias, ServicoCard } from '../components/ServicoCard'
+import { servicosDaCidade } from '../lib/servicos'
 import type { Categoria } from '../data/types'
 
 const ATALHOS = [
@@ -35,6 +40,7 @@ export function Inicio() {
     <div className="pb-4">
       {/* Topo azul com busca */}
       <section className="relative overflow-hidden rounded-b-[2rem] bg-primaria px-4 pb-6 pt-5 text-white">
+        <CapaCidade />
         <div className="absolute -right-16 -top-20 h-56 w-56 rounded-full bg-destaque/25 blur-2xl" aria-hidden />
         <div className="absolute -bottom-24 -left-10 h-56 w-56 rounded-full bg-produtor/25 blur-2xl" aria-hidden />
         <div className="relative flex items-center justify-between">
@@ -135,6 +141,33 @@ export function Inicio() {
         </section>
       )}
 
+      {/* Mapa da cidade (vitrine; o mapa completo abre em /mapa) */}
+      <section className="mt-7">
+        <TituloSecao titulo="Mapa da cidade" para="/mapa" acao="Abrir" />
+        <div className="px-4">
+          <div className="relative overflow-hidden rounded-3xl shadow-cartao">
+            <Mapa className="h-52" zoom={14} interativo={false} rotulo={`Mapa de ${city.cidade} com produtores, lojas e serviços`}>
+              <PinosCidade camadas={['produtor', 'loja', 'servico']} comBalao={false} />
+            </Mapa>
+            <Link to="/mapa" className="absolute inset-0 z-[500]" aria-label="Abrir o mapa da cidade">
+              <span className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-tinta shadow-md">
+                <Maximize2 className="h-3.5 w-3.5" aria-hidden /> Abrir mapa
+              </span>
+            </Link>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 px-1 text-[11px] text-slate-500">
+            {Object.values(CAMADAS).map(({ nome, cor, Icone }) => (
+              <span key={nome} className="flex items-center gap-1">
+                <span className="grid h-4 w-4 place-items-center rounded-full text-white" style={{ backgroundColor: cor }}>
+                  <Icone className="h-2.5 w-2.5" aria-hidden />
+                </span>
+                {nome}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Ofertas */}
       <section className="mt-7">
         <TituloSecao titulo="Ofertas da semana" para="/buscar?ordem=menor-preco" />
@@ -191,6 +224,20 @@ export function Inicio() {
           {lojas.slice(0, 4).map((v) => (
             <CartaoVendedor key={v.id} vendedor={v} />
           ))}
+        </div>
+      </section>
+
+      {/* Serviços públicos */}
+      <section className="mt-7">
+        <TituloSecao titulo="Serviços da cidade" />
+        <div className="no-scrollbar flex gap-3 overflow-x-auto px-4 pb-2">
+          {servicosDaCidade.map((s) => (
+            <ServicoCard key={s.id} servico={s} className="w-64 shrink-0" />
+          ))}
+        </div>
+        <div className="mt-3 px-4">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">Emergência · ligação gratuita</p>
+          <Emergencias />
         </div>
       </section>
 

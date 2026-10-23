@@ -9,12 +9,19 @@
     "bairro": "Zona Rural",
     "endereco": "Estrada do Ribeirão Grande, km 4",
     "foto": "/img/cap-galinhas.jpg",
-    "diasEntrega": ["Terça", "Sexta"],
+    "diasEntrega": [
+      "Terça",
+      "Sexta"
+    ],
     "retirada": "Feira de sábado, na praça central, das 7h às 11h",
     "entrega": true,
     "taxaEntrega": 4,
     "nota": 4.9,
-    "desde": 2009
+    "desde": 2009,
+    "coordenadas": {
+      "lat": -23.86714,
+      "lng": -49.86717
+    }
   },
   {
     "id": "horta-dona-cida",
@@ -26,12 +33,20 @@
     "bairro": "Vila Esperança",
     "endereco": "Rua das Hortênsias, fundos do nº 210",
     "foto": "/img/cap-horta.jpg",
-    "diasEntrega": ["Segunda", "Quarta", "Sexta"],
+    "diasEntrega": [
+      "Segunda",
+      "Quarta",
+      "Sexta"
+    ],
     "retirada": "Direto na horta, das 7h às 17h",
     "entrega": true,
     "taxaEntrega": 3,
     "nota": 4.8,
-    "desde": 2014
+    "desde": 2014,
+    "coordenadas": {
+      "lat": -23.88522,
+      "lng": -49.80697
+    }
   },
   {
     "id": "queijaria-agua-limpa",
@@ -43,12 +58,19 @@
     "bairro": "Zona Rural",
     "endereco": "Estrada da Água Limpa, km 7",
     "foto": "/img/cap-vacas.jpg",
-    "diasEntrega": ["Quarta", "Sábado"],
+    "diasEntrega": [
+      "Quarta",
+      "Sábado"
+    ],
     "retirada": "Na queijaria, sábado de manhã",
     "entrega": true,
     "taxaEntrega": 5,
     "nota": 4.9,
-    "desde": 2003
+    "desde": 2003,
+    "coordenadas": {
+      "lat": -23.93135,
+      "lng": -49.81034
+    }
   },
   {
     "id": "apiario-serra-azul",
@@ -60,12 +82,18 @@
     "bairro": "Bairro Alto",
     "endereco": "Rua Projetada 3, 88",
     "foto": "/img/cap-apicultor.jpg",
-    "diasEntrega": ["Sábado"],
+    "diasEntrega": [
+      "Sábado"
+    ],
     "retirada": "Em casa, qualquer dia depois das 18h",
     "entrega": true,
     "taxaEntrega": 4,
     "nota": 5,
-    "desde": 2016
+    "desde": 2016,
+    "coordenadas": {
+      "lat": -23.86083,
+      "lng": -49.80058
+    }
   },
   {
     "id": "sitio-pe-de-fruta",
@@ -77,12 +105,19 @@
     "bairro": "Zona Rural",
     "endereco": "Estrada do Pinhalzinho, km 2",
     "foto": "/img/cap-pomar.jpg",
-    "diasEntrega": ["Quinta", "Sábado"],
+    "diasEntrega": [
+      "Quinta",
+      "Sábado"
+    ],
     "retirada": "Feira de sábado, na praça central",
     "entrega": true,
     "taxaEntrega": 4,
     "nota": 4.7,
-    "desde": 2011
+    "desde": 2011,
+    "coordenadas": {
+      "lat": -23.87282,
+      "lng": -49.76755
+    }
   },
   {
     "id": "chacara-raiz-forte",
@@ -94,12 +129,19 @@
     "bairro": "Zona Rural",
     "endereco": "Estrada Velha do Cerrado, km 6",
     "foto": "/img/cap-roca.jpg",
-    "diasEntrega": ["Terça", "Sábado"],
+    "diasEntrega": [
+      "Terça",
+      "Sábado"
+    ],
     "retirada": "Feira de sábado ou na porteira do sítio",
     "entrega": true,
     "taxaEntrega": 5,
     "nota": 4.8,
-    "desde": 1998
+    "desde": 1998,
+    "coordenadas": {
+      "lat": -23.81396,
+      "lng": -49.82062
+    }
   },
   {
     "id": "cozinha-vo-tereza",
@@ -111,12 +153,20 @@
     "bairro": "Vila São Pedro",
     "endereco": "Rua Santa Rita, 455",
     "foto": "/img/cap-cozinha.jpg",
-    "diasEntrega": ["Quinta", "Sexta", "Sábado"],
+    "diasEntrega": [
+      "Quinta",
+      "Sexta",
+      "Sábado"
+    ],
     "retirada": "Em casa, das 8h às 18h",
     "entrega": true,
     "taxaEntrega": 3,
     "nota": 4.9,
-    "desde": 2019
+    "desde": 2019,
+    "coordenadas": {
+      "lat": -23.88665,
+      "lng": -49.79545
+    }
   },
   {
     "id": "cafe-alto-da-serra",
@@ -128,11 +178,17 @@
     "bairro": "Zona Rural",
     "endereco": "Estrada da Serra, km 11",
     "foto": "/img/cap-cafezal.jpg",
-    "diasEntrega": ["Sexta"],
+    "diasEntrega": [
+      "Sexta"
+    ],
     "retirada": "Feira de sábado ou combinando pelo app",
     "entrega": true,
     "taxaEntrega": 5,
     "nota": 4.9,
-    "desde": 2007
+    "desde": 2007,
+    "coordenadas": {
+      "lat": -23.82834,
+      "lng": -49.76564
+    }
   }
 ]
