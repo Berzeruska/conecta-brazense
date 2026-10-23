@@ -75,7 +75,7 @@
     "responsavel": "Valdecir Rocha",
     "ramo": "Agropecuária",
     "descricao": "Ração, mudas, ferramentas, botinas e tudo para o sítio e para a horta de casa.",
-    "bairro": "Vila Nova",
+    "bairro": "Centro",
     "endereco": "Rodovia, saída para o trevo, 2.400",
     "foto": "/img/cap-agro.jpg",
     "diasEntrega": [
@@ -98,7 +98,7 @@
     "responsavel": "Paulo Siqueira",
     "ramo": "Materiais de construção",
     "descricao": "Tintas, ferramentas e material de construção. Mistura a cor da tinta na hora.",
-    "bairro": "Jardim Primavera",
+    "bairro": "Centro",
     "endereco": "Rua Paraná, 780",
     "foto": "/img/cap-construcao.jpg",
     "diasEntrega": [
@@ -144,7 +144,7 @@
     "responsavel": "Camila Nunes",
     "ramo": "Flores e plantas",
     "descricao": "Buquês, arranjos e plantas para casa. Monta cesta de presente e entrega com cartão.",
-    "bairro": "Jardim das Flores",
+    "bairro": "Centro",
     "endereco": "Rua das Acácias, 61",
     "foto": "/img/cap-floricultura.jpg",
     "diasEntrega": [
@@ -167,7 +167,7 @@
     "responsavel": "Diego Martins",
     "ramo": "Serviços e consertos",
     "descricao": "Conserto de celular, troca de tela e bateria, e pequenos reparos em eletrônicos. Orçamento sem compromisso.",
-    "bairro": "Vila Nova",
+    "bairro": "Vila Garibaldi",
     "endereco": "Rua Rio de Janeiro, 209",
     "foto": "/img/cap-assistencia.jpg",
     "diasEntrega": [

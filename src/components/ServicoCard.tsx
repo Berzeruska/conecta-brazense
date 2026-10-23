@@ -48,12 +48,10 @@ export function ServicoCard({ servico, className = '', semMapa }: Props) {
           <MapPin className="mt-px h-3.5 w-3.5 shrink-0 text-destaque" aria-hidden />
           {servico.endereco ?? <span className="italic text-slate-400">Endereço a confirmar</span>}
         </p>
-        {servico.horario && (
-          <p className="mt-1 flex items-start gap-1.5 text-xs text-slate-600">
-            <Clock3 className="mt-px h-3.5 w-3.5 shrink-0 text-destaque" aria-hidden />
-            {servico.horario}
-          </p>
-        )}
+        <p className="mt-1 flex items-start gap-1.5 text-xs text-slate-600">
+          <Clock3 className="mt-px h-3.5 w-3.5 shrink-0 text-destaque" aria-hidden />
+          {servico.horario ?? <span className="italic text-slate-400">Horário a confirmar</span>}
+        </p>
         <p className="mt-1 flex items-start gap-1.5 text-xs text-slate-600">
           <Phone className="mt-px h-3.5 w-3.5 shrink-0 text-destaque" aria-hidden />
           {servico.telefone}

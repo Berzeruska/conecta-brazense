@@ -87,14 +87,16 @@ export function montarCatalogo(
 }
 
 export function useCatalogo(): Catalogo {
-  const perfil = useArmazenado<Perfil>('perfil', PERFIL_PADRAO)
+  const perfil = usePerfil()
   const meusProdutos = useArmazenado<Produto[]>('meus-produtos', [])
   const meusAnuncios = useArmazenado<Anuncio[]>('meus-anuncios', [])
   return useMemo(() => montarCatalogo(perfil, meusProdutos, meusAnuncios), [perfil, meusProdutos, meusAnuncios])
 }
 
-export function usePerfil() {
-  return useArmazenado<Perfil>('perfil', PERFIL_PADRAO)
+export function usePerfil(): Perfil {
+  const perfil = useArmazenado<Perfil>('perfil', PERFIL_PADRAO)
+  // Perfil salvo antes da troca de bairros do city.json: volta para o padrão.
+  return useMemo(() => (city.bairros.includes(perfil.bairro) ? perfil : { ...perfil, bairro: PERFIL_PADRAO.bairro }), [perfil])
 }
 
 export const acharVendedor = (cat: Catalogo, id: string) => cat.vendedores.find((v) => v.id === id)

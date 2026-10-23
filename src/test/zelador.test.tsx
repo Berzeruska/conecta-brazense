@@ -18,7 +18,7 @@ import {
 } from '../lib/reportes'
 import { chaveEhSecreta } from '../lib/supabase'
 import { emergencias, linkTelefone, servicos, servicosDaCidade } from '../lib/servicos'
-import { lojas, PERFIL_PADRAO, produtores } from '../lib/catalogo'
+import { anunciosDeExemplo, lojas, PERFIL_PADRAO, produtores } from '../lib/catalogo'
 import { gravar, ler } from '../lib/storage'
 import city from '../config/city.json'
 
@@ -87,10 +87,10 @@ describe('Zelador: dados e regras', () => {
 
   it('sem Supabase, cria o reporte só no aparelho (não fica pendente) e usa a foto da categoria', () => {
     const { reporte } = criarReporte(
-      { categoria: 'iluminacao', descricao: '  ', foto: '', lat: -23.87, lng: -49.8, bairro: 'Vila Nova' },
+      { categoria: 'iluminacao', descricao: '  ', foto: '', lat: -23.87, lng: -49.8, bairro: 'Vila Garibaldi' },
       { ...PERFIL_PADRAO, nome: 'Jurado' },
     )
-    expect(reporte).toMatchObject({ status: 'aberto', meu: true, pendente: false, autor: 'Jurado', bairro: 'Vila Nova' })
+    expect(reporte).toMatchObject({ status: 'aberto', meu: true, pendente: false, autor: 'Jurado', bairro: 'Vila Garibaldi' })
     expect(reporte.foto).toBe(CATEGORIAS_REPORTE.iluminacao.foto)
     expect(reporte.descricao).toMatch(/Iluminação/)
     expect(ler<Reporte[]>('reportes-locais', [])[0].id).toBe(reporte.id)
@@ -137,6 +137,17 @@ describe('serviços públicos e mapa da cidade', () => {
   it('monta o link de telefone só com dígitos', () => {
     expect(linkTelefone('(43) 3528-1100')).toBe('tel:4335281100')
     expect(linkTelefone('192')).toBe('tel:192')
+  })
+
+  it('bairros de todo o app são os do city.json (nomes reais do mapa)', () => {
+    const usados = [...produtores, ...lojas, ...anunciosDeExemplo(), ...reportesDeExemplo()].map((x) => x.bairro)
+    for (const b of usados) expect(city.bairros).toContain(b)
+  })
+
+  it('horário não confirmado aparece como "Horário a confirmar", nunca inventado', () => {
+    for (const s of servicosDaCidade) if (s.aConfirmar.includes('horario')) expect(s.horario, s.id).toBeNull()
+    abrir('/')
+    expect(screen.getAllByText('Horário a confirmar')).toHaveLength(3)
   })
 
   it('todo produtor e loja tem coordenada dentro do mapa', () => {
@@ -195,7 +206,7 @@ describe('telas do Tiro 2', () => {
 
   it('detalhe do reporte aberto mostra o contador grande', () => {
     abrir('/zelador/ex-poste-vila-nova')
-    expect(screen.getByRole('heading', { name: 'Iluminação · Vila Nova' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Iluminação · Vila Garibaldi' })).toBeInTheDocument()
     expect(screen.getByText('12')).toBeInTheDocument()
     expect(screen.getByText('dias sem resposta')).toBeInTheDocument()
   })
@@ -214,14 +225,14 @@ describe('telas do Tiro 2', () => {
           foto: CATEGORIAS_REPORTE.buraco.foto,
           lat: -23.87,
           lng: -49.8,
-          bairro: 'Bairro Alto',
+          bairro: 'Vila Verde',
           autor: 'Jurado',
           status: 'aberto',
           criadoEm: new Date().toISOString(),
         },
       ])
     })
-    expect(screen.getByRole('status')).toHaveTextContent(/Novo reporte agora.*Buraco · Bairro Alto/)
+    expect(screen.getByRole('status')).toHaveTextContent(/Novo reporte agora.*Buraco · Vila Verde/)
     expect(screen.getByText('Novo')).toBeInTheDocument()
   })
 

@@ -80,6 +80,7 @@ export interface Servico {
   tipo: TipoServico
   endereco: string | null
   telefone: string
+  /** null = ainda não confirmado (o card mostra "Horário a confirmar"). */
   horario: string | null
   coordenadas: Coordenadas | null
   /** Caminho fixo da foto real; se o arquivo ainda não existir, o card mostra um placeholder. */

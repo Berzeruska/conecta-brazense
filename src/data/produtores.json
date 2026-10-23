@@ -30,7 +30,7 @@
     "responsavel": "Aparecida Moreira",
     "ramo": "Verduras e legumes",
     "descricao": "Horta familiar sem veneno, irrigada com água de mina. Colhe de manhã cedo e entrega fresquinho. Monta a cesta da semana do jeito que você pedir.",
-    "bairro": "Vila Esperança",
+    "bairro": "Jardim Novo Brasil",
     "endereco": "Rua das Hortênsias, fundos do nº 210",
     "foto": "/img/cap-horta.jpg",
     "diasEntrega": [
@@ -79,7 +79,7 @@
     "responsavel": "Joel Kuster",
     "ramo": "Mel e derivados",
     "descricao": "Colmeias espalhadas entre eucalipto e mata nativa. Mel silvestre puro, sem mistura, colhido e envasado aqui mesmo.",
-    "bairro": "Bairro Alto",
+    "bairro": "Centro",
     "endereco": "Rua Projetada 3, 88",
     "foto": "/img/cap-apicultor.jpg",
     "diasEntrega": [
@@ -150,7 +150,7 @@
     "responsavel": "Tereza Batistão",
     "ramo": "Pães, bolos e geleias",
     "descricao": "Receitas de família feitas no forno a lenha: pão caseiro, bolo de chocolate, geleia de morango do sítio vizinho e conservas.",
-    "bairro": "Vila São Pedro",
+    "bairro": "Centro",
     "endereco": "Rua Santa Rita, 455",
     "foto": "/img/cap-cozinha.jpg",
     "diasEntrega": [

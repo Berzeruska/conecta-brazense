@@ -4,7 +4,10 @@
   "gentilicoPlural": "brazenses",
   "cidade": "Wenceslau Braz",
   "uf": "PR",
-  "coordenadas": { "lat": -23.873889, "lng": -49.802778 },
+  "coordenadas": {
+    "lat": -23.873889,
+    "lng": -49.802778
+  },
   "cores": {
     "primaria": "#16264A",
     "primariaClara": "#24396B",
@@ -15,12 +18,11 @@
   },
   "bairros": [
     "Centro",
-    "Vila Nova",
-    "Jardim Primavera",
-    "Vila São Pedro",
-    "Jardim das Flores",
-    "Bairro Alto",
-    "Vila Esperança",
+    "Vila Garibaldi",
+    "Vila Matadouro",
+    "Jardim Novo Brasil",
+    "Jardim San Rafael",
+    "Vila Verde",
     "Zona Rural"
   ]
 }
