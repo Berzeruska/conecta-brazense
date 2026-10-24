@@ -1,0 +1,94 @@
+{
+  "sugestoes": [
+    "Onde fica o hospital?",
+    "Qual o telefone do posto do Toyoki?",
+    "Qual o horário da prefeitura?",
+    "Como reporto um buraco na rua?",
+    "Quais os números de emergência?",
+    "Quais leis você conhece?"
+  ],
+  "itens": [
+    {
+      "id": "reportar-problema",
+      "palavras": ["buraco", "report", "poste", "lampada", "iluminac", "calcada", "entulho", "arvore", "asfalto", "problema na rua", "reclam"],
+      "resposta": "Pelo Zelador: tire uma foto, escolha a categoria (buraco, iluminação, lixo ou outros) e marque o ponto no mapa. O reporte entra no mapa público com o contador de dias sem resposta, para todo mundo acompanhar.",
+      "fonte": "Como funciona o Zelador (neste app)",
+      "link": { "para": "/zelador/novo", "rotulo": "Reportar um problema" }
+    },
+    {
+      "id": "acompanhar-reporte",
+      "palavras": ["acompanh", "dias sem resposta", "meu reporte", "resolvid", "andamento", "status"],
+      "resposta": "No mapa do Zelador cada pino tem a cor do status: vermelho é aberto, amarelo em andamento e verde resolvido. Tocando no pino você vê há quantos dias o problema espera resposta.",
+      "fonte": "Como funciona o Zelador (neste app)",
+      "link": { "para": "/zelador", "rotulo": "Abrir o mapa do Zelador" }
+    },
+    {
+      "id": "emergencia",
+      "palavras": ["emergenc", "numeros de emergencia", "urgenc", "socorro"],
+      "resposta": "Em emergência, ligue 190 (Polícia Militar), 192 (SAMU) ou 193 (Corpo de Bombeiros). São números nacionais, gratuitos e funcionam 24 horas.",
+      "servicos": ["pm-190", "samu-192", "bombeiros-193"],
+      "fonte": "Números nacionais de emergência"
+    },
+    {
+      "id": "lixo-coleta",
+      "palavras": ["coleta", "lixeiro", "caminhao de lixo", "reciclag", "lixo"],
+      "resposta": "Os dias de coleta de lixo de cada bairro ainda não estão na minha base, então não vou chutar. Se tem lixo acumulado na rua, reporte no Zelador; para saber os dias, ligue para a Prefeitura.",
+      "servicos": ["prefeitura"],
+      "fonte": "Como funciona o Zelador (neste app)",
+      "link": { "para": "/zelador/novo", "rotulo": "Reportar lixo acumulado" }
+    },
+    {
+      "id": "documentos-taxas",
+      "palavras": ["iptu", "taxa", "alvara", "imposto", "certidao", "segunda via", "boleto", "nota fiscal", "documento"],
+      "resposta": "Ainda não tenho o documento oficial sobre taxas e documentos da Prefeitura neste protótipo, e não vou inventar valor nem prazo. Quem informa com certeza é a própria Prefeitura:",
+      "servicos": ["prefeitura"],
+      "fonte": "Cadastro de serviços do app"
+    },
+    {
+      "id": "consulta-saude",
+      "palavras": ["marcar consulta", "agendar", "agendamento", "consulta", "exame", "remedio", "receita"],
+      "resposta": "Ainda não tenho as regras oficiais de agendamento. O melhor é ligar antes: o posto de saúde e o hospital estão aqui embaixo, com o botão para ligar. Em emergência, ligue 192.",
+      "servicos": ["posto-toyoki", "hospital-sao-sebastiao"],
+      "fonte": "Cadastro de serviços do app"
+    },
+    {
+      "id": "comprar-produtor",
+      "palavras": ["comprar", "ovo", "verdura", "hortalic", "queijo", "mel", "fruta", "produtor", "feira", "sitio"],
+      "resposta": "No Início do app tem a seção Do Produtor: você compara o preço do produtor com o da loja, reserva e combina a retirada ou a entrega, sem atravessador. Neste protótipo, produtores e lojas são fictícios.",
+      "fonte": "Mercado local (neste app)",
+      "link": { "para": "/produtores", "rotulo": "Ver produtores" }
+    },
+    {
+      "id": "vender-anunciar",
+      "palavras": ["vender", "anunci", "doar", "doac", "trocar", "troca", "classificad", "desapeg", "feirao"],
+      "resposta": "No Feirão você anuncia para vender, trocar ou doar: tire a foto pelo celular, escreva o título e o preço, e pronto. É o grupo de compra e venda da cidade, só que organizado e com busca.",
+      "fonte": "Feirão (neste app)",
+      "link": { "para": "/vendedor", "rotulo": "Anunciar no Feirão" }
+    },
+    {
+      "id": "reserva",
+      "palavras": ["reserva", "retirada", "entrega", "pagamento", "pagar", "pix", "pedido"],
+      "resposta": "Você monta a cesta, escolhe retirada ou entrega local e confirma a reserva. O app gera um código para mostrar ao vendedor; o pagamento é combinado direto com ele. Neste protótipo, a reserva é simulada.",
+      "fonte": "Mercado local (neste app)",
+      "link": { "para": "/carrinho", "rotulo": "Ver minha cesta" }
+    },
+    {
+      "id": "app-oficial",
+      "palavras": ["oficial", "quem fez", "quem criou", "funciona mesmo", "verdade", "prototipo", "governo"],
+      "resposta": "Este app é um protótipo feito por estudantes para a 1ª Feira de Ideias. Ele não é oficial da Prefeitura. Lojas, produtores e anúncios são fictícios; os telefones dos serviços públicos foram levantados pela equipe e estão marcados quando ainda falta confirmar.",
+      "fonte": "Sobre o Conecta (neste app)"
+    },
+    {
+      "id": "outra-cidade",
+      "palavras": ["outra cidade", "outras cidades", "trocar de cidade", "minha cidade", "expandir", "escala"],
+      "resposta": "Trocar de cidade é trocar um arquivo de configuração: nome do app, cores, mapa e bairros. O mesmo app vira Conecta Platinense, Conecta Siqueirense... para as cidades pequenas onde os grandes apps não chegam bem.",
+      "fonte": "Sobre o Conecta (neste app)"
+    },
+    {
+      "id": "sem-internet",
+      "palavras": ["sem internet", "offline", "modo aviao", "sem sinal", "instalar", "baixar o app"],
+      "resposta": "O app abre pelo QR code, sem loja de aplicativos, e pode ser instalado na tela inicial. Sem internet ele continua funcionando: mapa, catálogo e estas respostas prontas ficam guardados no celular, e o reporte do Zelador é enviado quando a rede volta.",
+      "fonte": "Sobre o Conecta (neste app)"
+    }
+  ]
+}

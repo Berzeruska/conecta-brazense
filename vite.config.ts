@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 import { existsSync, readdirSync } from 'node:fs'
-import { defineConfig, type Plugin } from 'vite'
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import { createServer, defineConfig, loadEnv, type Plugin, type ViteDevServer } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import city from './src/config/city.json'
@@ -41,10 +42,51 @@ function fotosLocais(): Plugin {
   }
 }
 
+/**
+ * /api/chat também no `npm run dev` e no `npm run preview`, com o mesmo código da função da Vercel.
+ * A ANTHROPIC_API_KEY do .env vai só para o processo do servidor (nunca para o navegador).
+ */
+function apiLocal(): Plugin {
+  let carregador: ViteDevServer | undefined
+  const atender = (obter: () => Promise<ViteDevServer>) => async (req: IncomingMessage, res: ServerResponse, seguir: () => void) => {
+    if (req.url?.split('?')[0] !== '/api/chat') return seguir()
+    try {
+      const vite = await obter()
+      const { POST } = (await vite.ssrLoadModule('/api/chat.ts')) as { POST: (r: Request) => Promise<Response> }
+      const pedacos: Buffer[] = []
+      for await (const p of req) pedacos.push(p as Buffer)
+      const resposta = await POST(
+        new Request('http://local/api/chat', { method: req.method, headers: { 'content-type': 'application/json' }, body: req.method === 'POST' ? Buffer.concat(pedacos) : undefined }),
+      )
+      res.writeHead(resposta.status, Object.fromEntries(resposta.headers))
+      res.end(await resposta.text())
+    } catch (e) {
+      console.error('api/chat local:', e)
+      res.writeHead(500).end()
+    }
+  }
+  return {
+    name: 'api-local',
+    config(_, { mode }) {
+      const env = loadEnv(mode, process.cwd(), '')
+      if (env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_API_KEY) process.env.ANTHROPIC_API_KEY = env.ANTHROPIC_API_KEY
+    },
+    configureServer(server) {
+      server.middlewares.use(atender(async () => server))
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(
+        atender(async () => (carregador ??= await createServer({ configFile: false, logLevel: 'silent', appType: 'custom', server: { middlewareMode: true, hmr: false } }))),
+      )
+    },
+  }
+}
+
 export default defineConfig({
   plugins: [
     react(),
     fotosLocais(),
+    apiLocal(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
@@ -54,7 +96,7 @@ export default defineConfig({
         description: `O app de ${city.cidade}, feito por nós, para nós.`,
         lang: 'pt-BR',
         theme_color: city.cores.primaria,
-        background_color: city.cores.fundo,
+        background_color: city.cores.primaria, // splash do Android: ícone sobre o azul da cidade
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
@@ -69,6 +111,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,jpg,webp,woff2}'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api\//],
       },
     }),
   ],
@@ -76,6 +119,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
+    // Os testes não dependem do .env de quem roda: sem Supabase e sem chave de API.
+    env: { VITE_SUPABASE_URL: '', VITE_SUPABASE_ANON_KEY: '', ANTHROPIC_API_KEY: '' },
     css: false,
   },
 })

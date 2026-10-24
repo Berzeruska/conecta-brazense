@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ChevronRight, Store as StoreIcon, Megaphone, Package, Receipt, Pencil, RotateCcw, Leaf } from 'lucide-react'
+import { ChevronRight, Store as StoreIcon, Megaphone, Package, Receipt, Pencil, RotateCcw, Leaf, QrCode, Monitor } from 'lucide-react'
 import type { Anuncio, Produto } from '../data/types'
 import { city } from '../lib/city'
 import { MINHA_BANCA_ID, PERFIL_PADRAO, usePerfil, type Perfil as TPerfil } from '../lib/catalogo'
@@ -122,6 +122,14 @@ export function Perfil() {
           </span>
           <ChevronRight className="h-5 w-5" />
         </Link>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <Link to="/qr" className="flex items-center gap-2 rounded-2xl bg-white p-3 text-sm font-bold text-tinta shadow-cartao active:scale-[0.99]">
+            <QrCode className="h-5 w-5 text-destaque" aria-hidden /> QR para a mesa
+          </Link>
+          <Link to="/telao" className="flex items-center gap-2 rounded-2xl bg-white p-3 text-sm font-bold text-tinta shadow-cartao active:scale-[0.99]">
+            <Monitor className="h-5 w-5 text-destaque" aria-hidden /> Telão ao vivo
+          </Link>
+        </div>
       </section>
 
       <section className="mt-6 px-4">

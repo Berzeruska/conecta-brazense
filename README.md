@@ -130,6 +130,7 @@ Variáveis em `.env.example`:
 ANTHROPIC_API_KEY=
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
+VITE_URL_PUBLICA=
 ```
 
 Deploy: conectar o repositório à Vercel, configurar as mesmas variáveis no painel, publicar.
@@ -137,7 +138,9 @@ Deploy: conectar o repositório à Vercel, configurar as mesmas variáveis no pa
 - **Supabase (Zelador ao vivo):** passo a passo em [`docs/supabase.md`](docs/supabase.md); SQL em [`supabase/schema.sql`](supabase/schema.sql).
 - **Mapa offline:** os tiles do OpenStreetMap da cidade ficam em `public/tiles` (`node scripts/baixar-tiles.mjs` para baixar de novo, ex.: ao trocar de cidade).
 - **Fotos reais da equipe:** `public/img/servicos/` (hospital.jpg, posto-toyoki.jpg, prefeitura.jpg) e `public/img/cidade/` (capa do Início). Basta colocar o arquivo; sem ele o app mostra um placeholder.
-- **Testes:** `npm test` (unidade e telas) e `npm run build && npm run preview` + `npm run e2e` (roteiro completo, inclusive modo avião).
+- **Pergunte à Cidade:** chave da API e leis em [`docs/pergunte.md`](docs/pergunte.md). PDFs das leis em `docs/leis/` (`npm run leis`).
+- **QR code da mesa:** página `/qr` (imprimir). **Roteiro da demo:** [`docs/roteiro-demo.md`](docs/roteiro-demo.md).
+- **Testes:** `npm test` (unidade e telas) e `npm run build:e2e && npm run preview` + `npm run e2e` (roteiro completo, inclusive modo avião; o build:e2e desliga o Supabase para não gravar no banco real).
 
 ## Instrução ao Claude Code
 

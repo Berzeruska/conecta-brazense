@@ -1,5 +1,6 @@
 // Roteiro da demo num navegador de verdade, com tela de celular, online e em modo avião.
-// Uso: npm run build && npm run preview (em outro terminal) && npm run e2e
+// Uso: npm run build:e2e && npm run preview (em outro terminal) && npm run e2e
+// build:e2e desliga o Supabase: o roteiro nunca grava reporte de teste no banco real da demo.
 import { chromium, devices } from 'playwright'
 import { mkdirSync } from 'node:fs'
 
@@ -17,6 +18,12 @@ function verificar(cond, msg) {
 
 const browser = await chromium.launch()
 const ctx = await browser.newContext({ ...devices['Pixel 7'], locale: 'pt-BR' })
+// Trava de segurança: se o build tiver o Supabase ligado, para antes de gravar qualquer coisa no banco real.
+let tocouSupabase = false
+await ctx.route(/supabase\.co/, (r) => {
+  tocouSupabase = true
+  return r.abort()
+})
 const page = await ctx.newPage()
 page.on('pageerror', (e) => erros.push(`pageerror: ${e.message}`))
 page.on('console', (m) => m.type() === 'error' && erros.push(`console: ${m.text()}`))
@@ -32,6 +39,11 @@ async function imagensQuebradas() {
 
 try {
   console.log('Online')
+  await page.goto(BASE)
+  await page.getByText('Produtor do dia').waitFor()
+  await page.goto(`${BASE}/zelador`)
+  await page.waitForTimeout(800)
+  if (tocouSupabase) throw new Error('Este build está com o Supabase ligado (.env). Rode "npm run build:e2e" para testar sem tocar o banco real.')
   await page.goto(BASE)
   await page.getByText('Produtor do dia').waitFor()
   await page.waitForTimeout(1600)
@@ -146,8 +158,38 @@ try {
   await print('17-mapa-hospital')
   ok('mapa abre no hospital com o balão aberto')
 
+  // Pergunte à Cidade: assistente on-line (simulado aqui, sem gastar chave) e depois o servidor real sem chave
+  await page.route('**/api/chat', (r) =>
+    r.fulfill({ json: { ok: true, texto: 'O Hospital São Sebastião fica na Rua Paraná, 26, no Centro. O horário ainda está a confirmar.', fontes: [], servicos: ['hospital-sao-sebastiao'] } }),
+  )
+  await page.getByRole('link', { name: 'Pergunte', exact: true }).click()
+  await page.getByText('Experimente').waitFor()
+  await page.waitForTimeout(400)
+  await print('18-pergunte')
+  await page.getByRole('button', { name: 'Onde fica o hospital?' }).click()
+  await page.getByText('Assistente on-line').waitFor()
+  verificar(await page.getByRole('link', { name: /Ligar para Hospital São Sebastião/ }).isVisible(), 'chat on-line: resposta do assistente com o cartão do hospital')
+  await page.unroute('**/api/chat')
+  await page.getByRole('textbox', { name: 'Sua pergunta' }).fill('Qual o horário da prefeitura?')
+  await page.keyboard.press('Enter')
+  await page.getByRole('heading', { name: 'Prefeitura Municipal' }).waitFor()
+  await page.waitForTimeout(700)
+  await print('19-pergunte-prefeitura')
+  verificar((await page.getByText('Resposta pronta · funciona sem internet').count()) === 1, 'chat sem chave no servidor: cai para a resposta pronta')
+  verificar(await page.getByText(/horário ainda está a confirmar/).last().isVisible(), 'chat não inventa horário')
+  await page.getByRole('heading', { name: 'Prefeitura Municipal' }).locator('xpath=ancestor::article').getByRole('link', { name: /Ver no mapa/ }).click()
+  await page.locator('.leaflet-popup').getByText('Prefeitura Municipal').waitFor()
+  await page.goBack()
+  await page.getByText('Qual o horário da prefeitura?').first().waitFor()
+  ok('"Ver no mapa" abre o mapa e a conversa continua ao voltar')
+
+  await page.goto(`${BASE}/qr`)
+  await page.locator('[data-testid=qr] svg').nth(1).waitFor()
+  await print('20-qr')
+  verificar((await page.locator('[data-testid=qr] svg').count()) === 2, 'página /qr com os dois QR codes')
+
   // Sem rolagem horizontal em nenhuma tela principal
-  for (const rota of ['/', '/buscar?q=mel', '/feirao', '/carrinho', '/perfil', '/vendedor', '/produto/queijo-frescal', '/feirao/sofa-3-lugares', '/zelador', '/zelador/novo', '/zelador/ex-lixo-flores', '/mapa']) {
+  for (const rota of ['/', '/buscar?q=mel', '/feirao', '/carrinho', '/perfil', '/vendedor', '/produto/queijo-frescal', '/feirao/sofa-3-lugares', '/zelador', '/zelador/novo', '/zelador/ex-lixo-flores', '/mapa', '/pergunte', '/qr']) {
     await page.goto(BASE + rota)
     await page.waitForTimeout(300)
     const larg = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)
@@ -161,7 +203,7 @@ try {
   await page.waitForFunction(() => !!navigator.serviceWorker.controller)
   await ctx.setOffline(true)
   erros.length = 0
-  for (const rota of ['/', '/buscar?q=queijo', '/feirao', '/produtor/apiario-serra-azul', '/produto/morango', '/perfil', '/feirao/gatinhos-doacao', '/zelador', '/zelador/ex-poste-vila-nova', '/mapa', '/telao']) {
+  for (const rota of ['/', '/buscar?q=queijo', '/feirao', '/produtor/apiario-serra-azul', '/produto/morango', '/perfil', '/feirao/gatinhos-doacao', '/zelador', '/zelador/ex-poste-vila-nova', '/mapa', '/pergunte', '/qr', '/telao']) {
     await page.goto(BASE + rota)
     await page.waitForLoadState('load')
     await page.waitForTimeout(400)
@@ -185,6 +227,19 @@ try {
   await page.getByRole('button', { name: /Enviar reporte/ }).click()
   await page.getByRole('heading', { name: /^Lixo · / }).waitFor()
   ok('offline: reporte salvo no aparelho')
+
+  // Pergunte à Cidade em modo avião: resposta pronta, com cartão e botão de ligar
+  await page.goto(`${BASE}/pergunte`)
+  await page.getByRole('button', { name: /Nova conversa/ }).click()
+  await page.getByRole('button', { name: 'Qual o telefone do posto do Toyoki?' }).click()
+  await page.getByRole('heading', { name: 'Posto de saúde do Toyoki' }).waitFor()
+  await page.waitForTimeout(600)
+  await print('21-offline-pergunte')
+  verificar(await page.getByRole('link', { name: /Ligar para Posto de saúde do Toyoki/ }).isVisible(), 'offline: chat responde com o cartão do posto')
+  verificar((await page.locator('[data-testid=qr] svg').count()) === 0, 'offline: (sanidade) fora do /qr')
+  await page.goto(`${BASE}/qr`)
+  await page.locator('[data-testid=qr] svg').nth(1).waitFor()
+  ok('offline: /qr gera os QR codes sem internet')
   await ctx.setOffline(false)
 
   verificar(erros.length === 0, `nenhum erro no console ${erros.join(' | ')}`)

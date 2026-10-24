@@ -272,37 +272,56 @@ export function useReportesAoVivo(): EstadoConexao {
     let ativo = true
     let inscrito = false
     let sair = () => {}
+    // Em modo avião não insiste: nada de requisição falhando a cada 20 s nem websocket reconectando.
+    const semRede = () => navigator.onLine === false
 
     const atualizar = async () => {
+      if (semRede()) return ativo && setEstado('offline')
       await sincronizarPendentes()
       const ok = await carregarRemotos()
       if (ativo) setEstado(ok ? (inscrito ? 'ao-vivo' : 'conectando') : 'offline')
     }
-    void atualizar()
-    const relogio = setInterval(atualizar, 20_000)
-    const voltouRede = () => void atualizar()
-    window.addEventListener('online', voltouRede)
 
-    void obterSupabase().then((sb) => {
-      if (!sb || !ativo) return
-      const canal = sb
-        .channel(`reports-${Math.random().toString(36).slice(2)}`)
-        .on('postgres_changes', { event: '*', schema: 'public', table: TABELA }, (p) => {
-          if (p.new && 'id' in p.new) guardarRemotos([daLinha(p.new as Linha)])
-        })
-        .subscribe((s) => {
-          inscrito = s === 'SUBSCRIBED'
-          if (!ativo) return
-          if (inscrito) setEstado('ao-vivo')
-          else if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') setEstado('offline')
-        })
-      sair = () => void sb.removeChannel(canal)
-    })
+    const conectar = () =>
+      void obterSupabase().then((sb) => {
+        if (!sb || !ativo || semRede()) return
+        const canal = sb
+          .channel(`reports-${Math.random().toString(36).slice(2)}`)
+          .on('postgres_changes', { event: '*', schema: 'public', table: TABELA }, (p) => {
+            if (p.new && 'id' in p.new) guardarRemotos([daLinha(p.new as Linha)])
+          })
+          .subscribe((s) => {
+            inscrito = s === 'SUBSCRIBED'
+            if (!ativo) return
+            if (inscrito) setEstado('ao-vivo')
+            else if (s === 'CHANNEL_ERROR' || s === 'TIMED_OUT') setEstado('offline')
+          })
+        sair = () => {
+          inscrito = false
+          sair = () => {}
+          void sb.removeChannel(canal)
+        }
+      })
+
+    void atualizar()
+    conectar()
+    const relogio = setInterval(atualizar, 20_000)
+    const voltouRede = () => {
+      conectar()
+      void atualizar()
+    }
+    const caiuRede = () => {
+      sair()
+      setEstado('offline')
+    }
+    window.addEventListener('online', voltouRede)
+    window.addEventListener('offline', caiuRede)
 
     return () => {
       ativo = false
       clearInterval(relogio)
       window.removeEventListener('online', voltouRede)
+      window.removeEventListener('offline', caiuRede)
       sair()
     }
   }, [])

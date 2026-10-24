@@ -16,3 +16,11 @@ createRoot(document.getElementById('root')!).render(
     </BrowserRouter>
   </StrictMode>,
 )
+
+// Tira o splash do index.html assim que o app desenhou a primeira tela.
+requestAnimationFrame(() => {
+  const splash = document.getElementById('splash')
+  if (!splash) return
+  splash.classList.add('saindo')
+  setTimeout(() => splash.remove(), 350)
+})

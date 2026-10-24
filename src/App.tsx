@@ -14,12 +14,13 @@ import { Confirmacao } from './pages/Confirmacao'
 import { Perfil } from './pages/Perfil'
 import { PainelVendedor } from './pages/PainelVendedor'
 import { ListaVendedores } from './pages/ListaVendedores'
-import { EmBreve } from './pages/EmBreve'
 import { Zelador } from './pages/Zelador'
 import { NovoReporte } from './pages/NovoReporte'
 import { PaginaReporte } from './pages/Reporte'
 import { Telao } from './pages/Telao'
 import { MapaCidade } from './pages/MapaCidade'
+import { Pergunte } from './pages/Pergunte'
+import { Qr } from './pages/Qr'
 import { NaoEncontrado } from './pages/NaoEncontrado'
 
 export function Rotas() {
@@ -55,7 +56,7 @@ export function Rotas() {
           <Route path="/zelador/novo" element={<NovoReporte />} />
           <Route path="/zelador/:id" element={<PaginaReporte />} />
           <Route path="/mapa" element={<MapaCidade />} />
-          <Route path="/pergunte" element={<EmBreve tela="pergunte" />} />
+          <Route path="/pergunte" element={<Pergunte />} />
           <Route path="*" element={<NaoEncontrado />} />
         </Routes>
       </motion.div>
@@ -64,8 +65,10 @@ export function Rotas() {
 }
 
 export default function App() {
-  // O telão é tela cheia para projetar: sem a moldura de celular e sem a navegação inferior.
-  if (useLocation().pathname === '/telao') return <Telao />
+  // Telão (projetar) e QR (imprimir) são tela cheia: sem a moldura de celular e sem a navegação inferior.
+  const { pathname } = useLocation()
+  if (pathname === '/telao') return <Telao />
+  if (pathname === '/qr') return <Qr />
   return (
     <ProvedorToast>
       <div className="mx-auto min-h-dvh max-w-md bg-fundo pb-[calc(4.5rem+env(safe-area-inset-bottom))] sm:shadow-2xl">
