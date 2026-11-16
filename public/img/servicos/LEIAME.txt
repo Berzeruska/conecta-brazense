@@ -6,3 +6,4 @@ Fotos reais dos serviços públicos (tiradas pela equipe). Use exatamente estes 
 
 Formato paisagem (deitada), até 300 KB (ex.: 1200 x 800), com o letreiro do prédio inteiro na foto.
 Enquanto um arquivo não existir, o app mostra um placeholder.
+Coloque o arquivo NESTA pasta (public/img/servicos), nunca em dist/: a pasta dist é apagada a cada build.

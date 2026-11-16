@@ -309,8 +309,8 @@ describe('telas do Tiro 2', () => {
     expect(screen.getByRole('heading', { name: 'Hospital São Sebastião' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Ligar para Hospital São Sebastião/ })).toHaveAttribute('href', 'tel:4335281100')
     expect(screen.getByRole('link', { name: /Ligar 192, SAMU/ })).toHaveAttribute('href', 'tel:192')
-    // Sem foto real ainda: placeholder, nunca <img> quebrada
-    expect(screen.queryByRole('img', { name: 'Hospital São Sebastião' })).not.toBeInTheDocument()
+    // Fotos reais da equipe em public/img/servicos: os três cards mostram a foto, não o placeholder
+    for (const s of servicosDaCidade) expect(screen.getByRole('img', { name: s.nome }), s.id).toHaveAttribute('src', s.foto)
     // Posto sem coordenada: não oferece "Ver no mapa"
     expect(screen.getAllByRole('link', { name: /Ver no mapa/ })).toHaveLength(1)
     expect(screen.getAllByText('Local a confirmar')).toHaveLength(2)
