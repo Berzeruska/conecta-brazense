@@ -8,7 +8,9 @@ import {
   citacoesValidas,
   detectarServicos,
   montarContexto,
+  promptDoSistema,
   responderLocal,
+  textoDoContexto,
   validarSaida,
   type BaseLeis,
   type Dados,
@@ -48,21 +50,38 @@ afterEach(() => {
 })
 
 describe('Pergunte à Cidade: motor', () => {
-  it('reconhece hospital, posto, prefeitura e emergências', () => {
+  it('reconhece hospital, posto, câmara e emergências; a prefeitura não é mais serviço', () => {
     expect(detectarServicos('Onde fica o hospital?', dadosChat.servicos)).toEqual(['hospital-sao-sebastiao'])
     expect(detectarServicos('telefone do posto do Toyoki', dadosChat.servicos)).toEqual(['posto-toyoki'])
-    expect(detectarServicos('Que horas abre a Prefeitura?', dadosChat.servicos)).toEqual(['prefeitura'])
+    expect(detectarServicos('Onde fica a Câmara de Vereadores?', dadosChat.servicos)).toEqual(['camara-vereadores'])
+    expect(detectarServicos('Que horas abre a Prefeitura?', dadosChat.servicos)).toEqual([])
     expect(detectarServicos('preciso de uma ambulância', dadosChat.servicos)).toEqual(['samu-192'])
   })
 
   it('responde serviço com o cadastro e nunca inventa horário ou endereço', () => {
-    const h = responderLocal('Qual o horário da prefeitura?', dadosChat)
-    expect(h.servicos).toEqual(['prefeitura'])
+    const h = responderLocal('Onde fica a Câmara de Vereadores?', dadosChat)
+    expect(h.servicos).toEqual(['camara-vereadores'])
+    expect(h.texto).toMatch(/fica no número 78, mas a rua ainda está a confirmar/)
+    expect(h.texto).toMatch(/telefone ainda está a confirmar/)
     expect(h.texto).toMatch(/horário ainda está a confirmar/)
-    expect(h.texto).toMatch(/\(43\) 3528-1157 \(a confirmar\)/)
+    expect(h.texto).not.toMatch(/\(\d{2}\)/)
     const p = responderLocal('Onde fica o posto do Toyoki?', dadosChat)
-    expect(p.texto).toMatch(/endereço a confirmar/)
-    for (const r of [h, p]) expect(r.texto).not.toMatch(/\d{1,2} ?h|\d{1,2}:\d{2}/)
+    expect(p.texto).toMatch(/Unidade Básica de Saúde da Família do Toyoki fica no número 210, mas a rua ainda está a confirmar/)
+    expect(p.texto).toMatch(/\(43\) 3528-2849/)
+    for (const r of [h, p]) expect(r.texto).not.toMatch(/\d{1,2} ?h\b|\d{1,2}:\d{2}/)
+  })
+
+  it('pergunta sobre a prefeitura: diz que não tem os dados, sem cartão, telefone ou endereço', () => {
+    for (const q of ['Qual o horário da prefeitura?', 'telefone da prefeitura', 'Como pago o IPTU?', 'Que dia passa a coleta de lixo?']) {
+      const r = responderLocal(q, dadosChat)
+      expect(r.servicos, q).toEqual([])
+      expect(r.texto, q).not.toMatch(/3528|Expedicion|\d{1,2}:\d{2}/)
+    }
+    expect(responderLocal('Qual o horário da prefeitura?', dadosChat).texto).toMatch(/ainda não foram confirmados/)
+    expect(JSON.stringify(dadosChat.servicos)).not.toMatch(/prefeitura/i)
+    expect(JSON.stringify(dadosChat)).not.toMatch(/3528-1157|Expedicion/)
+    expect(textoDoContexto(montarContexto('horário da prefeitura', dadosChat))).not.toMatch(/3528-1157|Expedicion/)
+    expect(promptDoSistema('X', 'Y')).not.toMatch(/ligar para a Prefeitura/)
   })
 
   it('a base de leis do repositório bate com a pasta docs/leis (vazia = não cita lei)', () => {
@@ -83,10 +102,10 @@ describe('Pergunte à Cidade: motor', () => {
     expect(responderLocal('Quais leis você conhece?', comLei).texto).toMatch(/Lei nº 9\.999\/2021/)
   })
 
-  it('pergunta sem resposta: admite e manda para a Prefeitura', () => {
+  it('pergunta sem resposta: admite que não sabe, sem cartão', () => {
     const r = responderLocal('Quando é a festa do peão?', dadosChat)
     expect(r.texto).toMatch(/não vou inventar/)
-    expect(r.servicos).toContain('prefeitura')
+    expect(r.servicos).toEqual([])
   })
 
   it('recusa citação de lei ou artigo que não estava no contexto', () => {
@@ -101,8 +120,8 @@ describe('Pergunte à Cidade: motor', () => {
   it('valida a saída do modelo contra o contexto', () => {
     const ctx = montarContexto('entulho em terreno baldio', comLei)
     const id = ctx.trechos[0].id
-    const ok = validarSaida(JSON.stringify({ resposta: 'Não pode (Lei nº 9.999/2021, art. 3º).', fontes: [id, 'inventado#1'], servicos: ['prefeitura', 'nao-existe'] }), ctx)
-    expect(ok).toMatchObject({ ok: true, servicos: ['prefeitura'], fontes: [{ rotulo: expect.stringMatching(/Lei nº 9\.999\/2021, art\./) }] })
+    const ok = validarSaida(JSON.stringify({ resposta: 'Não pode (Lei nº 9.999/2021, art. 3º).', fontes: [id, 'inventado#1'], servicos: ['hospital-sao-sebastiao', 'prefeitura', 'nao-existe'] }), ctx)
+    expect(ok).toMatchObject({ ok: true, servicos: ['hospital-sao-sebastiao'], fontes: [{ rotulo: expect.stringMatching(/Lei nº 9\.999\/2021, art\./) }] })
     expect(ok!.fontes).toHaveLength(1)
     expect(validarSaida('{"resposta":"Lei nº 4.321, art. 2º","fontes":[],"servicos":[]}', ctx)).toBeNull()
     expect(validarSaida('não é json', ctx)).toBeNull()
@@ -161,9 +180,9 @@ describe('Pergunte à Cidade: tela', () => {
     const u = userEvent.setup()
     const { unmount } = abrir('/pergunte')
     await u.type(screen.getByRole('textbox', { name: 'Sua pergunta' }), 'telefone do posto de saúde{Enter}')
-    const card = (await screen.findByRole('heading', { name: 'Posto de saúde do Toyoki' }, { timeout: 3000 })).closest('article')!
+    const card = (await screen.findByRole('heading', { name: 'Unidade Básica de Saúde da Família do Toyoki' }, { timeout: 3000 })).closest('article')!
     expect(within(card).getByText('Local a confirmar')).toBeInTheDocument()
-    expect(within(card).getByText('Endereço a confirmar')).toBeInTheDocument()
+    expect(card).toHaveTextContent('Nº 210 · rua a confirmar')
     unmount()
     abrir('/pergunte')
     expect(screen.getByText('telefone do posto de saúde')).toBeInTheDocument()

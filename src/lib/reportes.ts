@@ -198,11 +198,46 @@ export function daLinha(l: Linha): Reporte {
   }
 }
 
+const maisNovosPrimeiro = (a: Reporte, b: Reporte) => b.criadoEm.localeCompare(a.criadoEm)
+
 function guardarRemotos(novos: Reporte[]) {
   const porId = new Map(ler<Reporte[]>('reportes-remotos', []).map((r) => [r.id, r]))
   for (const r of novos) porId.set(r.id, r)
-  const lista = [...porId.values()].sort((a, b) => b.criadoEm.localeCompare(a.criadoEm)).slice(0, LIMITE_REMOTOS)
-  gravar('reportes-remotos', lista)
+  gravar('reportes-remotos', [...porId.values()].sort(maisNovosPrimeiro).slice(0, LIMITE_REMOTOS))
+}
+
+/** O banco avisou (realtime) que estes reportes foram apagados: somem do aparelho também. */
+export function removerReportes(ids: string[]) {
+  const fora = new Set(ids)
+  for (const chave of ['reportes-remotos', 'reportes-locais']) {
+    const atuais = ler<Reporte[]>(chave, [])
+    const ficam = atuais.filter((r) => !fora.has(r.id))
+    if (ficam.length !== atuais.length) gravar(chave, ficam)
+  }
+}
+
+/** Ids que este aparelho já viu no servidor. Tirar a foto ANTES de consultar, para comparar com a resposta. */
+export const idsVistosNoServidor = () => new Set(ler<Reporte[]>('reportes-remotos', []).map((r) => r.id))
+
+/**
+ * A consulta ao servidor é a verdade: o que o aparelho já tinha visto lá e não veio mais foi apagado
+ * no banco, então sai do cache e da lista "meus reportes" (senão o aparelho ressuscita o reporte).
+ * Ficam: o que ainda não foi enviado, o que nunca passou pelo servidor e o que chegou durante a consulta.
+ */
+export function reconciliarComServidor(servidor: Reporte[], vistosAntes: Set<string>) {
+  const noServidor = new Set(servidor.map((r) => r.id))
+  // A consulta traz só os LIMITE_REMOTOS mais novos: mais antigo que isso não dá para afirmar que sumiu.
+  const completa = servidor.length < LIMITE_REMOTOS
+  const maisAntigo = servidor.reduce((m, r) => (r.criadoEm < m ? r.criadoEm : m), servidor[0]?.criadoEm ?? '')
+  const sumiu = (r: Reporte) => vistosAntes.has(r.id) && !noServidor.has(r.id) && (completa || r.criadoEm >= maisAntigo)
+
+  const cache = ler<Reporte[]>('reportes-remotos', [])
+  const remotos = [...servidor, ...cache.filter((r) => !noServidor.has(r.id) && !sumiu(r))].sort(maisNovosPrimeiro).slice(0, LIMITE_REMOTOS)
+  gravar('reportes-remotos', remotos)
+
+  const locais = ler<Reporte[]>('reportes-locais', [])
+  const ficam = locais.filter((r) => r.pendente || !sumiu(r))
+  if (ficam.length !== locais.length) gravar('reportes-locais', ficam)
 }
 
 let sincronizando = false
@@ -248,12 +283,23 @@ export async function carregarRemotos(): Promise<boolean> {
   const sb = await obterSupabase()
   if (!sb) return false
   try {
+    const vistosAntes = idsVistosNoServidor()
     const { data, error } = await sb.from(TABELA).select('*').order('criado_em', { ascending: false }).limit(LIMITE_REMOTOS)
     if (error || !data) return false
-    guardarRemotos((data as Linha[]).map(daLinha))
+    reconciliarComServidor((data as Linha[]).map(daLinha), vistosAntes)
     return true
   } catch {
     return false
+  }
+}
+
+/** Evento do realtime: INSERT/UPDATE trazem a linha em `new`; DELETE traz só o id em `old`. */
+export function aplicarEvento(p: { eventType?: string; new?: unknown; old?: unknown }) {
+  if (p.eventType === 'DELETE') {
+    const id = (p.old as { id?: unknown } | null)?.id
+    if (typeof id === 'string') removerReportes([id])
+  } else if (p.new && typeof p.new === 'object' && 'id' in p.new) {
+    guardarRemotos([daLinha(p.new as Linha)])
   }
 }
 
@@ -287,9 +333,7 @@ export function useReportesAoVivo(): EstadoConexao {
         if (!sb || !ativo || semRede()) return
         const canal = sb
           .channel(`reports-${Math.random().toString(36).slice(2)}`)
-          .on('postgres_changes', { event: '*', schema: 'public', table: TABELA }, (p) => {
-            if (p.new && 'id' in p.new) guardarRemotos([daLinha(p.new as Linha)])
-          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: TABELA }, (p) => aplicarEvento(p))
           .subscribe((s) => {
             inscrito = s === 'SUBSCRIBED'
             if (!ativo) return

@@ -72,9 +72,11 @@ export function PinosCidade({ camadas, foco, comBalao = true }: { camadas: Camad
                 <div>
                   <p className="font-bold text-tinta">{s.nome}</p>
                   {s.endereco && <p className="text-xs text-slate-500">{s.endereco}</p>}
-                  <a href={linkTelefone(s.telefone)} className="mt-1.5 flex items-center gap-1 font-semibold text-destaque">
-                    <Phone className="h-3.5 w-3.5" aria-hidden /> {s.telefone}
-                  </a>
+                  {s.telefone && (
+                    <a href={linkTelefone(s.telefone)} className="mt-1.5 flex items-center gap-1 font-semibold text-destaque">
+                      <Phone className="h-3.5 w-3.5" aria-hidden /> {s.telefone}
+                    </a>
+                  )}
                 </div>
               )}
             </Pino>

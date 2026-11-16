@@ -4,7 +4,8 @@ import type { Servico } from '../data/types'
 
 export const servicos = servicosJson as Servico[]
 export const servicosDaCidade = servicos.filter((s) => s.tipo !== 'emergencia')
-export const emergencias = servicos.filter((s) => s.tipo === 'emergencia')
+/** Emergência sempre tem telefone (190, 192, 193). */
+export const emergencias = servicos.filter((s): s is Servico & { telefone: string } => s.tipo === 'emergencia' && s.telefone !== null)
 
 export const acharServico = (id: string) => servicos.find((s) => s.id === id)
 

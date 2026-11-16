@@ -6,11 +6,14 @@ import App from '../App'
 import type { Reporte } from '../data/types'
 import {
   CATEGORIAS_REPORTE,
+  aplicarEvento,
   criarReporte,
   daLinha,
   dentroDaCidade,
   diasSemResposta,
+  idsVistosNoServidor,
   mesclarReportes,
+  reconciliarComServidor,
   reportesDeExemplo,
   resumir,
   rotuloEspera,
@@ -114,6 +117,69 @@ describe('Zelador: dados e regras', () => {
     expect(r).toMatchObject({ id: 'r-1', criadoEm: '2026-10-01T10:00:00.000Z', respondidoEm: '2026-10-02T10:00:00.000Z', resolvidoEm: undefined })
   })
 
+  describe('reporte apagado no banco não volta', () => {
+    const r = (id: string, extra: Partial<Reporte> = {}): Reporte => ({
+      id,
+      categoria: 'buraco',
+      descricao: '',
+      foto: '',
+      lat: -23.87,
+      lng: -49.8,
+      bairro: 'Centro',
+      autor: 'A',
+      status: 'aberto',
+      criadoEm: new Date(Date.now() - DIA).toISOString(),
+      ...extra,
+    })
+    const ids = (chave: string) => ler<Reporte[]>(chave, []).map((x) => x.id)
+
+    it('evento DELETE do realtime tira o reporte do cache e dos "meus"', () => {
+      gravar('reportes-remotos', [r('r-fantasma'), r('r-fica')])
+      gravar('reportes-locais', [r('r-fantasma', { meu: true, pendente: false })])
+      aplicarEvento({ eventType: 'DELETE', new: {}, old: { id: 'r-fantasma' } })
+      expect(ids('reportes-remotos')).toEqual(['r-fica'])
+      expect(ids('reportes-locais')).toEqual([])
+    })
+
+    it('INSERT e UPDATE do realtime continuam entrando', () => {
+      const linha = { ...r('r-novo'), criado_em: new Date().toISOString(), respondido_em: null, resolvido_em: null }
+      aplicarEvento({ eventType: 'INSERT', new: linha, old: {} })
+      aplicarEvento({ eventType: 'UPDATE', new: { ...linha, status: 'andamento' }, old: { id: 'r-novo' } })
+      expect(ler<Reporte[]>('reportes-remotos', [])).toMatchObject([{ id: 'r-novo', status: 'andamento' }])
+    })
+
+    it('consulta ao servidor sem o reporte: ele sai do aparelho (o DELETE aconteceu com o app fechado)', () => {
+      gravar('reportes-remotos', [r('r-fantasma'), r('r-fica')])
+      gravar('reportes-locais', [r('r-fantasma', { meu: true, pendente: false })])
+      reconciliarComServidor([r('r-fica')], idsVistosNoServidor())
+      expect(ids('reportes-remotos')).toEqual(['r-fica'])
+      expect(ids('reportes-locais')).toEqual([])
+      expect(mesclarReportes([], ler('reportes-locais', []), ler('reportes-remotos', [])).map((x) => x.id)).toEqual(['r-fica'])
+    })
+
+    it('não apaga o que ainda não foi enviado, o que nunca foi ao servidor nem o que chegou durante a consulta', () => {
+      gravar('reportes-remotos', [r('r-visto')])
+      gravar('reportes-locais', [r('r-pendente', { meu: true, pendente: true }), r('r-so-local', { meu: true, pendente: false })])
+      const antes = idsVistosNoServidor()
+      // Chega pelo realtime enquanto a consulta (que ainda não o enxergava) está em andamento
+      aplicarEvento({ eventType: 'INSERT', new: { ...r('r-chegou'), criado_em: new Date().toISOString(), respondido_em: null, resolvido_em: null }, old: {} })
+      reconciliarComServidor([r('r-visto')], antes)
+      expect(ids('reportes-remotos').sort()).toEqual(['r-chegou', 'r-visto'])
+      expect(ids('reportes-locais')).toEqual(['r-pendente', 'r-so-local'])
+    })
+
+    it('com a consulta cheia (só os 50 mais novos), não conclui que um reporte mais antigo foi apagado', () => {
+      const servidor = Array.from({ length: 50 }, (_, i) => r(`r-${i}`, { criadoEm: new Date(Date.now() - i * 1000).toISOString() }))
+      const antigo = r('r-antigo', { criadoEm: new Date(Date.now() - 30 * DIA).toISOString(), meu: true, pendente: false })
+      const recente = r('r-recente-apagado', { criadoEm: new Date(Date.now() - 500).toISOString(), meu: true, pendente: false })
+      gravar('reportes-remotos', [antigo, recente])
+      gravar('reportes-locais', [antigo, recente])
+      reconciliarComServidor(servidor, idsVistosNoServidor())
+      expect(ids('reportes-locais')).toEqual(['r-antigo'])
+      expect(ids('reportes-remotos')).not.toContain('r-recente-apagado')
+    })
+  })
+
   it('recusa a chave secreta do Supabase no front', () => {
     const jwt = (role: string) => `x.${btoa(JSON.stringify({ role })).replace(/=+$/, '')}.y`
     expect(chaveEhSecreta(jwt('service_role'))).toBe(true)
@@ -126,12 +192,13 @@ describe('Zelador: dados e regras', () => {
 describe('serviços públicos e mapa da cidade', () => {
   it('servicos.json tem os campos pedidos', () => {
     for (const s of servicos) {
-      for (const campo of ['nome', 'tipo', 'endereco', 'telefone', 'horario', 'coordenadas', 'foto', 'fonte']) expect(s, s.id).toHaveProperty(campo)
+      for (const campo of ['nome', 'tipo', 'endereco', 'numero', 'telefone', 'horario', 'coordenadas', 'foto', 'fonte']) expect(s, s.id).toHaveProperty(campo)
       if (s.coordenadas) expect(dentroDaCidade(s.coordenadas.lat, s.coordenadas.lng), s.id).toBe(true)
     }
     expect(emergencias.map((s) => s.telefone)).toEqual(['190', '192', '193'])
     expect(emergencias.every((s) => s.foto === null && s.endereco === null)).toBe(true)
-    expect(servicosDaCidade.map((s) => s.foto)).toEqual(['/img/servicos/hospital.jpg', '/img/servicos/posto-toyoki.jpg', '/img/servicos/prefeitura.jpg'])
+    expect(servicosDaCidade.map((s) => s.foto)).toEqual(['/img/servicos/hospital.jpg', '/img/servicos/posto-toyoki.jpg', '/img/servicos/camara.jpg'])
+    expect(servicos.some((s) => /prefeitura/i.test(s.id + s.nome + s.tipo))).toBe(false)
   })
 
   it('monta o link de telefone só com dígitos', () => {
@@ -245,8 +312,15 @@ describe('telas do Tiro 2', () => {
     // Sem foto real ainda: placeholder, nunca <img> quebrada
     expect(screen.queryByRole('img', { name: 'Hospital São Sebastião' })).not.toBeInTheDocument()
     // Posto sem coordenada: não oferece "Ver no mapa"
-    expect(screen.getAllByRole('link', { name: /Ver no mapa/ })).toHaveLength(2)
-    expect(screen.getByText('Local a confirmar')).toBeInTheDocument()
+    expect(screen.getAllByRole('link', { name: /Ver no mapa/ })).toHaveLength(1)
+    expect(screen.getAllByText('Local a confirmar')).toHaveLength(2)
+    // Prefeitura saiu; a Câmara entra só com o que foi informado (nº 78), sem telefone inventado
+    expect(screen.queryByRole('heading', { name: /Prefeitura/ })).not.toBeInTheDocument()
+    const camara = screen.getByRole('heading', { name: 'Câmara de Vereadores de Wenceslau Braz' }).closest('article')!
+    expect(camara).toHaveTextContent('Nº 78 · rua a confirmar')
+    expect(within(camara).getByText('Telefone a confirmar')).toBeInTheDocument()
+    expect(within(camara).queryByRole('link', { name: /Ligar/ })).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Unidade Básica de Saúde da Família do Toyoki' }).closest('article')).toHaveTextContent('Nº 210 · rua a confirmar')
     // Sem fotos em public/img/cidade, o topo fica como antes
     expect(screen.queryByTestId('capa-cidade')).not.toBeInTheDocument()
   })

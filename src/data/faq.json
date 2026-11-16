@@ -2,7 +2,7 @@
   "sugestoes": [
     "Onde fica o hospital?",
     "Qual o telefone do posto do Toyoki?",
-    "Qual o horário da prefeitura?",
+    "Onde fica a Câmara de Vereadores?",
     "Como reporto um buraco na rua?",
     "Quais os números de emergência?",
     "Quais leis você conhece?"
@@ -32,16 +32,14 @@
     {
       "id": "lixo-coleta",
       "palavras": ["coleta", "lixeiro", "caminhao de lixo", "reciclag", "lixo"],
-      "resposta": "Os dias de coleta de lixo de cada bairro ainda não estão na minha base, então não vou chutar. Se tem lixo acumulado na rua, reporte no Zelador; para saber os dias, ligue para a Prefeitura.",
-      "servicos": ["prefeitura"],
+      "resposta": "Os dias de coleta de lixo de cada bairro ainda não estão na minha base, então não vou chutar. Se tem lixo acumulado na rua, reporte no Zelador.",
       "fonte": "Como funciona o Zelador (neste app)",
       "link": { "para": "/zelador/novo", "rotulo": "Reportar lixo acumulado" }
     },
     {
       "id": "documentos-taxas",
       "palavras": ["iptu", "taxa", "alvara", "imposto", "certidao", "segunda via", "boleto", "nota fiscal", "documento"],
-      "resposta": "Ainda não tenho o documento oficial sobre taxas e documentos da Prefeitura neste protótipo, e não vou inventar valor nem prazo. Quem informa com certeza é a própria Prefeitura:",
-      "servicos": ["prefeitura"],
+      "resposta": "Ainda não tenho o documento oficial sobre taxas e documentos neste protótipo, e não vou inventar valor nem prazo. Isso se resolve na Prefeitura, mas o contato dela ainda não foi confirmado pela equipe, então não aparece aqui.",
       "fonte": "Cadastro de serviços do app"
     },
     {
@@ -89,6 +87,12 @@
       "palavras": ["sem internet", "offline", "modo aviao", "sem sinal", "instalar", "baixar o app"],
       "resposta": "O app abre pelo QR code, sem loja de aplicativos, e pode ser instalado na tela inicial. Sem internet ele continua funcionando: mapa, catálogo e estas respostas prontas ficam guardados no celular, e o reporte do Zelador é enviado quando a rede volta.",
       "fonte": "Sobre o Conecta (neste app)"
+    },
+    {
+      "id": "prefeitura-sem-dados",
+      "palavras": ["prefeitura", "prefeito", "paco municipal"],
+      "resposta": "O endereço, o telefone e o horário da Prefeitura ainda não foram confirmados pela equipe, então ela não aparece neste protótipo. Prefiro não informar a chutar.",
+      "fonte": "Cadastro de serviços do app"
     }
   ]
 }

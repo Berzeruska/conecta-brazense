@@ -72,14 +72,18 @@ export interface Anuncio {
   meu?: boolean
 }
 
-export type TipoServico = 'saude' | 'prefeitura' | 'emergencia'
+export type TipoServico = 'saude' | 'camara' | 'emergencia'
 
 export interface Servico {
   id: string
   nome: string
   tipo: TipoServico
+  /** Rua completa, só quando confirmada. null = a confirmar. */
   endereco: string | null
-  telefone: string
+  /** Número do prédio quando a rua ainda não foi confirmada (o card mostra "Nº 78 · rua a confirmar"). */
+  numero: string | null
+  /** null = ainda não confirmado (o card não oferece "Ligar"). */
+  telefone: string | null
   /** null = ainda não confirmado (o card mostra "Horário a confirmar"). */
   horario: string | null
   coordenadas: Coordenadas | null

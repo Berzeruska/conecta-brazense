@@ -26,7 +26,7 @@ const TEMPO_LIMITE = 9_000
 
 /**
  * Pergunta ao assistente (/api/chat). Sem internet, sem chave, demora ou erro → resposta pronta.
- * Os cartões de serviço vêm sempre do cadastro local: hospital, posto e prefeitura aparecem com ou sem rede.
+ * Os cartões de serviço vêm sempre do cadastro local: hospital, posto e câmara aparecem com ou sem rede.
  */
 export async function perguntar(pergunta: string, historico: Mensagem[]): Promise<Resposta> {
   const local = responderLocal(pergunta, dadosChat)
@@ -45,7 +45,7 @@ export async function perguntar(pergunta: string, historico: Mensagem[]): Promis
       if (dados.motivo !== 'citacao-invalida') pausaAte = Date.now() + PAUSA
       return local
     }
-    const servicos = [...new Set([...local.servicos.filter((id) => id !== 'prefeitura' || dados.servicos.includes(id)), ...dados.servicos])]
+    const servicos = [...new Set([...local.servicos, ...dados.servicos])]
     const fontesServico = [...new Set(servicos.map((id) => dadosChat.servicos.find((s) => s.id === id)?.fonte).filter((f): f is string => !!f))].map(
       (rotulo) => ({ tipo: 'servico' as const, rotulo }),
     )

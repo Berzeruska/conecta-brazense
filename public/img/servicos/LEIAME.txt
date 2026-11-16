@@ -1,8 +1,8 @@
 Fotos reais dos serviços públicos (tiradas pela equipe). Use exatamente estes nomes:
 
   hospital.jpg       Hospital São Sebastião
-  posto-toyoki.jpg   Posto de saúde do Toyoki
-  prefeitura.jpg     Prefeitura
+  posto-toyoki.jpg   Unidade Básica de Saúde da Família do Toyoki
+  camara.jpg         Câmara de Vereadores de Wenceslau Braz
 
-Formato paisagem (deitada), de preferência até 300 KB (ex.: 1200 x 800).
+Formato paisagem (deitada), até 300 KB (ex.: 1200 x 800), com o letreiro do prédio inteiro na foto.
 Enquanto um arquivo não existir, o app mostra um placeholder.

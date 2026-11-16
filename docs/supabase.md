@@ -62,5 +62,7 @@ quem protege os dados são as regras do passo 2.
 - **Simular resposta da prefeitura** (o telão muda a cor do pino ao vivo): no *Table Editor*, edite a linha e
   mude `status` para `andamento` e preencha `respondido_em`; ou use os comandos no fim do `schema.sql`.
 - **Limpar os testes antes da feira:** `delete from public.reports;` no SQL Editor.
+- **Apagar um reporte:** apague a linha no *Table Editor*. Os aparelhos abertos tiram o ponto na hora (evento DELETE do realtime);
+  os que estavam fechados tiram na próxima consulta ao servidor (ao abrir, e a cada 20 s).
 - O plano gratuito pausa projetos parados há ~1 semana. Abra o app alguns dias antes de 2/12 para acordar o projeto.
 - Se a internet da feira cair, os celulares guardam o reporte e enviam sozinhos quando a rede voltar.

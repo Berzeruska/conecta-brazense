@@ -2,7 +2,7 @@
 
 ## Como responde
 
-1. **Cartões de serviço** (hospital, posto, prefeitura, 190/192/193) vêm sempre de `src/data/servicos.json`, com ou sem internet.
+1. **Cartões de serviço** (hospital, posto, câmara, 190/192/193) vêm sempre de `src/data/servicos.json`, com ou sem internet.
    Campo ainda não confirmado aparece como "a confirmar", nunca estimado.
 2. **Com internet e chave:** o app chama `/api/chat` (função da Vercel), que manda ao modelo `claude-haiku-5-5`
    só o cadastro de serviços, os artigos de lei que combinam com a pergunta e o resumo do app.

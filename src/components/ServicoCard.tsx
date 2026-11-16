@@ -7,12 +7,12 @@ import { Foto } from './Foto'
 export const ICONE_SERVICO: Record<string, LucideIcon> = {
   'hospital-sao-sebastiao': Hospital,
   'posto-toyoki': Stethoscope,
-  prefeitura: Landmark,
+  'camara-vereadores': Landmark,
   'pm-190': Shield,
   'samu-192': Ambulance,
   'bombeiros-193': Flame,
 }
-export const iconeServico = (s: Servico): LucideIcon => ICONE_SERVICO[s.id] ?? (s.tipo === 'prefeitura' ? Landmark : Hospital)
+export const iconeServico = (s: Servico): LucideIcon => ICONE_SERVICO[s.id] ?? (s.tipo === 'camara' ? Landmark : Hospital)
 
 /** Enquanto a equipe não coloca a foto real, um fundo da cor da cidade com o ícone do serviço. */
 function Placeholder({ servico }: { servico: Servico }) {
@@ -46,7 +46,14 @@ export function ServicoCard({ servico, className = '', semMapa }: Props) {
         <h3 className="text-base font-bold leading-tight text-tinta">{servico.nome}</h3>
         <p className="mt-1.5 flex items-start gap-1.5 text-xs text-slate-600">
           <MapPin className="mt-px h-3.5 w-3.5 shrink-0 text-destaque" aria-hidden />
-          {servico.endereco ?? <span className="italic text-slate-400">Endereço a confirmar</span>}
+          {servico.endereco ??
+            (servico.numero ? (
+              <span>
+                Nº {servico.numero} · <span className="italic text-slate-400">rua a confirmar</span>
+              </span>
+            ) : (
+              <span className="italic text-slate-400">Endereço a confirmar</span>
+            ))}
         </p>
         <p className="mt-1 flex items-start gap-1.5 text-xs text-slate-600">
           <Clock3 className="mt-px h-3.5 w-3.5 shrink-0 text-destaque" aria-hidden />
@@ -54,16 +61,18 @@ export function ServicoCard({ servico, className = '', semMapa }: Props) {
         </p>
         <p className="mt-1 flex items-start gap-1.5 text-xs text-slate-600">
           <Phone className="mt-px h-3.5 w-3.5 shrink-0 text-destaque" aria-hidden />
-          {servico.telefone}
+          {servico.telefone ?? <span className="italic text-slate-400">Telefone a confirmar</span>}
         </p>
         <div className="mt-auto flex gap-2 pt-3">
-          <a
-            href={linkTelefone(servico.telefone)}
-            className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-primaria text-sm font-bold text-white active:scale-[0.98]"
-            aria-label={`Ligar para ${servico.nome}: ${servico.telefone}`}
-          >
-            <Phone className="h-4 w-4" aria-hidden /> Ligar
-          </a>
+          {servico.telefone && (
+            <a
+              href={linkTelefone(servico.telefone)}
+              className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-primaria text-sm font-bold text-white active:scale-[0.98]"
+              aria-label={`Ligar para ${servico.nome}: ${servico.telefone}`}
+            >
+              <Phone className="h-4 w-4" aria-hidden /> Ligar
+            </a>
+          )}
           {!semMapa &&
             (servico.coordenadas ? (
               <Link
