@@ -1,6 +1,6 @@
 Fotos reais dos serviços públicos (tiradas pela equipe). Use exatamente estes nomes:
 
-  hospital.jpg       Hospital São Sebastião
+  hospital.jpg       Hospital São Sebastião (foto da equipe, editada para preservar a privacidade de pacientes)
   posto-toyoki.jpg   Unidade Básica de Saúde da Família do Toyoki
   camara.jpg         Câmara de Vereadores de Wenceslau Braz
 

@@ -9,6 +9,7 @@
     "horario": null,
     "coordenadas": { "lat": -23.87435, "lng": -49.80222 },
     "foto": "/img/servicos/hospital.jpg",
+    "legendaFoto": "Foto da equipe, editada para preservar a privacidade de pacientes",
     "fonte": "Contato levantado pela equipe do projeto (out/2026); localização: OpenStreetMap",
     "aConfirmar": ["horario"]
   },

@@ -89,6 +89,8 @@ export interface Servico {
   coordenadas: Coordenadas | null
   /** Caminho fixo da foto real; se o arquivo ainda não existir, o card mostra um placeholder. */
   foto: string | null
+  /** Aviso mostrado sob a foto quando ela foi editada (ex.: privacidade). */
+  legendaFoto?: string
   fonte: string
   /** Campos que ainda precisam ser conferidos pela equipe. */
   aConfirmar: ('endereco' | 'telefone' | 'horario' | 'coordenadas')[]

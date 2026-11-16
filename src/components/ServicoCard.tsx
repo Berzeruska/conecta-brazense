@@ -42,6 +42,7 @@ export function ServicoCard({ servico, className = '', semMapa }: Props) {
   return (
     <article className={`flex flex-col overflow-hidden rounded-3xl bg-white shadow-cartao ${className}`}>
       {foto ? <Foto src={foto} alt={servico.nome} className="aspect-[16/9] w-full" /> : <Placeholder servico={servico} />}
+      {foto && servico.legendaFoto && <p className="px-4 pt-2 text-[10px] italic leading-tight text-slate-400">{servico.legendaFoto}</p>}
       <div className="flex flex-1 flex-col p-4">
         <h3 className="text-base font-bold leading-tight text-tinta">{servico.nome}</h3>
         <p className="mt-1.5 flex items-start gap-1.5 text-xs text-slate-600">

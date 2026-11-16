@@ -311,6 +311,7 @@ describe('telas do Tiro 2', () => {
     expect(screen.getByRole('link', { name: /Ligar 192, SAMU/ })).toHaveAttribute('href', 'tel:192')
     // Fotos reais da equipe em public/img/servicos: os três cards mostram a foto, não o placeholder
     for (const s of servicosDaCidade) expect(screen.getByRole('img', { name: s.nome }), s.id).toHaveAttribute('src', s.foto)
+    expect(screen.getByText('Foto da equipe, editada para preservar a privacidade de pacientes')).toBeInTheDocument()
     // Posto sem coordenada: não oferece "Ver no mapa"
     expect(screen.getAllByRole('link', { name: /Ver no mapa/ })).toHaveLength(1)
     expect(screen.getAllByText('Local a confirmar')).toHaveLength(2)
